@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
-enum Currency: string
+use App\Concerns\InteractsWithEnum;
+use App\Contracts\Enum;
+
+enum Currency: string implements Enum
 {
+    use InteractsWithEnum;
+
     case MYR = 'MYR';
     case AED = 'AED';
     case USD = 'USD';
@@ -19,14 +24,19 @@ enum Currency: string
         return self::MYR;
     }
 
-    /**
-     * Get all available currencies.
-     *
-     * @return array<string>
-     */
-    public static function values(): array
+    public function label(): string
     {
-        return array_map(fn (self $currency): string => $currency->value, self::cases());
+        return $this->displayName();
+    }
+
+    public function description(): string
+    {
+        return match ($this) {
+            self::MYR => __('Malaysian Ringgit - Official currency of Malaysia'),
+            self::AED => __('UAE Dirham - Official currency of United Arab Emirates'),
+            self::USD => __('US Dollar - Official currency of the United States'),
+            self::SGD => __('Singapore Dollar - Official currency of Singapore'),
+        };
     }
 
     /**

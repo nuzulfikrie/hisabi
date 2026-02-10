@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Domain\Ranges\Metrics\Metrics;
+namespace Tests\Unit\Domain\Metrics;
 
 use App\Domain\Metrics\PartitionMetric;
 use Tests\TestCase;

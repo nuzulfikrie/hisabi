@@ -3,7 +3,10 @@ import {
   Receipt,
   StorefrontIcon,
   CirclesThreeIcon,
-  ChartDonutIcon
+  ChartDonutIcon,
+  UsersThreeIcon,
+  DevicesIcon,
+  GearSixIcon,
 } from "@phosphor-icons/react"
 
 import {
@@ -12,6 +15,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -44,16 +48,37 @@ const items = [
   },
 ]
 
+const adminItems = [
+  {
+    title: "Users",
+    url: "admin.users.index",
+    icon: UsersThreeIcon,
+  },
+  {
+    title: "Sessions",
+    url: "sessions.index",
+    icon: DevicesIcon,
+  },
+  {
+    title: "Settings",
+    url: "admin.settings.index",
+    icon: GearSixIcon,
+  },
+]
+
 interface AppSidebarProps {
   auth?: {
     user: {
       name: string;
       email: string;
+      role?: string;
     };
   };
 }
 
 export function AppSidebar({ auth }: AppSidebarProps) {
+  const isAdmin = auth?.user?.role === 'admin';
+
   return (
     <Sidebar collapsible="offcanvas" variant="inset">
       <SidebarHeader>
@@ -84,6 +109,26 @@ export function AppSidebar({ auth }: AppSidebarProps) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {isAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Administration</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {adminItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={route().current(item.url)}>
+                      <Link href={route(item.url)}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
       <SidebarFooter>
         {auth?.user && <UserNav user={auth.user} />}

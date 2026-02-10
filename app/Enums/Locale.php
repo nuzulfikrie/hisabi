@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
-enum Locale: string
+use App\Concerns\InteractsWithEnum;
+use App\Contracts\Enum;
+
+enum Locale: string implements Enum
 {
+    use InteractsWithEnum;
+
     case ENGLISH = 'en';
     case MALAY = 'ms';
 
@@ -17,14 +22,17 @@ enum Locale: string
         return self::MALAY;
     }
 
-    /**
-     * Get all available locales.
-     *
-     * @return array<string>
-     */
-    public static function values(): array
+    public function label(): string
     {
-        return array_map(fn (self $locale): string => $locale->value, self::cases());
+        return $this->displayName();
+    }
+
+    public function description(): string
+    {
+        return match ($this) {
+            self::ENGLISH => __('English language - International'),
+            self::MALAY => __('Bahasa Malaysia - National language of Malaysia'),
+        };
     }
 
     /**

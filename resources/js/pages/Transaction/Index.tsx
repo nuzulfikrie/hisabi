@@ -18,6 +18,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowElbowDownRightIcon, X } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { FileSpreadsheet, FileText } from '@phosphor-icons/react';
 import TransactionStats from '@/components/Domain/TransactionStats';
 import { getCategoryIcon } from '@/Utils/categoryIcons';
 import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
@@ -176,6 +183,16 @@ export default function Index({ auth }: { auth: any }) {
         }
     };
 
+    const handleExport = (format: string) => {
+        const params = new URLSearchParams();
+        params.append('format', format);
+        if (filters.dateFrom) params.append('start_date', filters.dateFrom);
+        if (filters.dateTo) params.append('end_date', filters.dateTo);
+        if (filters.brandId) params.append('brand_id', filters.brandId);
+
+        window.location.href = route('exports.transactions') + '?' + params.toString();
+    };
+
     const header = (
         <div className="flex items-center justify-between w-full">
             <h2>Transactions</h2>
@@ -184,6 +201,24 @@ export default function Index({ auth }: { auth: any }) {
                     onDateChange={handleDateChange}
                     initialDate={dateRange}
                 />
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm">
+                            <FileSpreadsheet className="mr-2 h-4 w-4" />
+                            Export
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleExport('xlsx')}>
+                            <FileSpreadsheet className="mr-2 h-4 w-4" />
+                            Export as Excel
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleExport('csv')}>
+                            <FileText className="mr-2 h-4 w-4" />
+                            Export as CSV
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
                 <RecordTransactionButton
                     brands={allBrands}
                     onSuccess={onCreate}

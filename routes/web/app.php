@@ -4,13 +4,12 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\Admin\SessionController;
 use App\Http\Controllers\Telegram\SettingsController as TelegramSettingsController;
-use Illuminate\Http\Request;
-use App\Contracts\ReportManager;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
@@ -36,20 +35,11 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/sessions/{sessionId}', [SessionController::class, 'destroy'])->name('sessions.destroy');
     Route::delete('/sessions', [SessionController::class, 'destroyAll'])->name('sessions.destroy-all');
 
-    // Reports & Exports
-    Route::get('/report', function (Request $request) {
-        $start_date = $request->query('start_date');
-        $end_date = $request->query('end_date');
+    // Reports
+    Route::get('/report', [ReportController::class, 'index'])->name('reports.index');
 
-        $data = [
-            'sections' => app(ReportManager::class)->generate($start_date, $end_date),
-            'currency' => config('hisabi.currency'),
-            'range' => $start_date && $end_date ? $start_date . ' - ' . $end_date : now()->format('F Y')
-        ];
-
-        return view('report', $data);
-    });
-
+    // Exports
+    Route::get('/exports', [ExportController::class, 'index'])->name('exports.index');
     Route::prefix('exports')->group(function () {
         Route::get('/transactions', [ExportController::class, 'transactions'])->name('exports.transactions');
         Route::get('/report', [ExportController::class, 'report'])->name('exports.report');

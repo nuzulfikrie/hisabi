@@ -7,6 +7,8 @@ import {
   UsersThreeIcon,
   DevicesIcon,
   GearSixIcon,
+  FileTextIcon,
+  DownloadIcon,
 } from "@phosphor-icons/react"
 
 import {
@@ -45,6 +47,16 @@ const items = [
     title: "Categories",
     url: "categories",
     icon: CirclesThreeIcon,
+  },
+  {
+    title: "Reports",
+    url: "reports.index",
+    icon: FileTextIcon,
+  },
+  {
+    title: "Exports",
+    url: "exports.index",
+    icon: DownloadIcon,
   },
 ]
 

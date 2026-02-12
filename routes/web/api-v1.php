@@ -33,7 +33,7 @@ Route::middleware(['auth'])->prefix('api/v1')->group(function () {
         Route::get('/total-savings', [MetricsController::class, 'totalSavings']);
         Route::get('/total-investment', [MetricsController::class, 'totalInvestment']);
         Route::get('/total-cash', [MetricsController::class, 'totalCash']);
-        Route::get('/net-worth', [MetricsController::class, 'netNetWorth']);
+        Route::get('/net-worth', [MetricsController::class, 'netWorth']);
         Route::get('/net-worth-trend', [MetricsController::class, 'netWorthTrend']);
         Route::get('/total-income-trend', [MetricsController::class, 'totalIncomeTrend']);
         Route::get('/total-expenses-trend', [MetricsController::class, 'totalExpensesTrend']);

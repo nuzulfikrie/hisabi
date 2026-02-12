@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Domains\Transaction\Models\Transaction;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -13,12 +14,38 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping
 
     public function __construct(array $filters = [])
     {
-        $this->filters = $filters;
+        $this->filters = $this->validateFilters($filters);
+    }
+
+    /**
+     * Validate and sanitize filters.
+     *
+     * @param array<string, mixed> $filters
+     * @return array<string, mixed>
+     */
+    protected function validateFilters(array $filters): array
+    {
+        $validated = [];
+
+        if (! empty($filters['start_date'])) {
+            $validated['start_date'] = $filters['start_date'];
+        }
+
+        if (! empty($filters['end_date'])) {
+            $validated['end_date'] = $filters['end_date'];
+        }
+
+        if (! empty($filters['brand_id']) && is_numeric($filters['brand_id'])) {
+            $validated['brand_id'] = (int) $filters['brand_id'];
+        }
+
+        return $validated;
     }
 
     public function collection()
     {
-        $query = Transaction::query();
+        $query = Transaction::query()
+            ->where('user_id', Auth::id());
 
         if (! empty($this->filters['start_date'])) {
             $query->whereDate('created_at', '>=', $this->filters['start_date']);

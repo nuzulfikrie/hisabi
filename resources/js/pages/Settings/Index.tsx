@@ -12,7 +12,8 @@ import {
     FunnelIcon,
     BellRingingIcon,
     ChatCircleDotsIcon,
-    SignOutIcon
+    SignOutIcon,
+    TelegramLogoIcon
 } from "@phosphor-icons/react";
 
 import { Button } from '@/components/ui/button';
@@ -95,6 +96,16 @@ const settingsNavItems = [
                 title: "SMS Parser Rules",
                 value: "sms-parser-rules",
                 icon: FunnelIcon,
+            },
+        ]
+    },
+    {
+        section: "Integrations",
+        items: [
+            {
+                title: "Telegram",
+                value: "telegram",
+                icon: TelegramLogoIcon,
             },
         ]
     },
@@ -523,6 +534,30 @@ export default function Index({ auth }: { auth: { user: User } }) {
                                     </CardHeader>
                                     <CardContent>
                                         <p className="text-muted-foreground">Coming soon...</p>
+                                    </CardContent>
+                                </Card>
+                            )}
+
+                            {activeTab === 'telegram' && (
+                                <Card>
+                                    <CardHeader>
+                                        <div className="flex items-center gap-3">
+                                            <TelegramLogoIcon className="w-6 h-6 text-blue-500" />
+                                            <div>
+                                                <CardTitle>Telegram Integration</CardTitle>
+                                                <CardDescription>Link your Telegram account to record transactions via chat</CardDescription>
+                                            </div>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <p className="text-muted-foreground">
+                                            Connect your Telegram account to quickly record transactions by sending messages to the Hisabi bot.
+                                        </p>
+                                        <Button asChild>
+                                            <Link href="/settings/telegram">
+                                                Manage Telegram Settings
+                                            </Link>
+                                        </Button>
                                     </CardContent>
                                 </Card>
                             )}

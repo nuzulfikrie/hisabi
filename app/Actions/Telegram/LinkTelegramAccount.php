@@ -14,21 +14,28 @@ class LinkTelegramAccount
 {
     use AsAction;
 
-    public function handle(string $chatId, string $username, string $verificationCode): ?User
+    public function handle(string $chatId, ?string $username, string $verificationCode): ?User
     {
-        // Find user by verification code
-        $cacheKey = "telegram_link:{$verificationCode}";
+        // Normalize code (ensure it's 6 digits)
+        $code = trim($verificationCode);
+
+        // Validate code format
+        if (! preg_match('/^\d{6}$/', $code)) {
+            Log::warning('Invalid Telegram verification code format', [
+                'chat_id' => $chatId,
+                'username' => $username,
+                'code' => $code,
+            ]);
+
+            return null;
+        }
+
+        // Find user by verification code from cache
+        $cacheKey = "telegram_link:{$code}";
         $cachedData = Cache::get($cacheKey);
 
         if (! $cachedData) {
-            // Try to find user with matching verification code directly
-            $user = User::where('telegram_verification_code', $verificationCode)->first();
-        } else {
-            $user = User::find($cachedData['user_id'] ?? null);
-        }
-
-        if (! $user) {
-            Log::warning('Invalid Telegram verification code', [
+            Log::warning('Expired or invalid Telegram verification code', [
                 'chat_id' => $chatId,
                 'username' => $username,
             ]);
@@ -36,6 +43,22 @@ class LinkTelegramAccount
             return null;
         }
 
+        $user = User::find($cachedData['user_id'] ?? null);
+
+        if (! $user) {
+            Log::warning('User not found for Telegram verification code', [
+                'chat_id' => $chatId,
+                'username' => $username,
+                'code' => $code,
+            ]);
+
+            return null;
+        }
+
+        // Clear ALL old codes for this user before linking
+        $this->clearAllUserCodes($user);
+
+        // Update user with Telegram details
         $user->update([
             'telegram_chat_id' => $chatId,
             'telegram_username' => $username,
@@ -43,14 +66,30 @@ class LinkTelegramAccount
             'telegram_verification_code' => null,
         ]);
 
-        // Clear cache
+        // Clear the used code from cache
         Cache::forget($cacheKey);
 
         Log::info('Telegram account linked', [
             'user_id' => $user->id,
             'chat_id' => $chatId,
+            'username' => $username,
         ]);
 
         return $user;
+    }
+
+    /**
+     * Clear all verification codes for a user.
+     */
+    private function clearAllUserCodes(User $user): void
+    {
+        // Clear the current code from cache if it exists
+        if ($user->telegram_verification_code) {
+            Cache::forget("telegram_link:{$user->telegram_verification_code}");
+        }
+
+        // Also clear any other potential codes for this user by pattern
+        // Note: In production with Redis, you might want to use a Set to track user codes
+        // For now, we clear the known code
     }
 }

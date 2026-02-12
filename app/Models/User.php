@@ -80,10 +80,12 @@ class User extends Authenticatable
 
     /**
      * Generate a verification code for Telegram linking.
+     * @deprecated Use SettingsController::generateCode() instead for proper rate limiting and caching.
      */
     public function generateTelegramVerificationCode(): string
     {
-        $code = strtoupper(substr(md5(uniqid((string) $this->id, true)), 0, 8));
+        // Generate 6-digit numeric OTP
+        $code = str_pad((string) random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
         $this->update(['telegram_verification_code' => $code]);
 
         return $code;

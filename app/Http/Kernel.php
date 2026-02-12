@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'locale' => \App\Http\Middleware\LocaleMiddleware::class,
         'admin' => \App\Http\Middleware\IsAdmin::class,
+        'api.rate_limit' => \App\Http\Middleware\ApiRateLimit::class,
     ];
 }

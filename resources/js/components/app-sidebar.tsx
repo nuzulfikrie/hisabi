@@ -39,6 +39,11 @@ const items = [
     icon: Receipt,
   },
   {
+    title: "Scan Receipt",
+    url: "transactions.scan-receipt",
+    icon: Receipt,
+  },
+  {
     title: "Brands",
     url: "brands",
     icon: StorefrontIcon,

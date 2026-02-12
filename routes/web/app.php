@@ -11,11 +11,13 @@ use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\Admin\SessionController;
 use App\Http\Controllers\Telegram\SettingsController as TelegramSettingsController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
+    Route::get('/transactions/scan-receipt', fn () => Inertia::render('Transaction/ScanReceipt'))->name('transactions.scan-receipt');
     Route::get('/brands', [BrandController::class, 'index'])->name('brands');
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');

@@ -24,7 +24,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { FileSpreadsheet, FileText } from '@phosphor-icons/react';
+import { FileSpreadsheet, FileText, Camera } from '@phosphor-icons/react';
 import TransactionStats from '@/components/Domain/TransactionStats';
 import { getCategoryIcon } from '@/Utils/categoryIcons';
 import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
@@ -219,6 +219,14 @@ export default function Index({ auth }: { auth: any }) {
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.visit('/transactions/scan-receipt')}
+                >
+                    <Camera className="mr-2 h-4 w-4" />
+                    Scan Receipt
+                </Button>
                 <RecordTransactionButton
                     brands={allBrands}
                     onSuccess={onCreate}

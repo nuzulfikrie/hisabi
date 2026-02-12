@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\MetricsController;
+use App\Http\Controllers\Api\V1\OcrController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->prefix('api/v1')->group(function () {
@@ -54,5 +55,12 @@ Route::middleware(['auth'])->prefix('api/v1')->group(function () {
         Route::get('/brand-stats', [MetricsController::class, 'brandStats']);
         Route::get('/category-stats', [MetricsController::class, 'categoryStats']);
         Route::get('/circle-pack', [MetricsController::class, 'circlePack']);
+    });
+
+    // OCR Routes with rate limiting
+    Route::prefix('ocr')->middleware(['api.rate_limit'])->group(function () {
+        Route::post('/scan', [OcrController::class, 'scan']);
+        Route::post('/scan-and-parse', [OcrController::class, 'scanAndParse']);
+        Route::get('/status', [OcrController::class, 'status']);
     });
 });

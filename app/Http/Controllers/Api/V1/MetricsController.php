@@ -29,6 +29,16 @@ use App\Domains\Metrics\Metrics\TransactionsStdDevMetric;
 use App\Domains\Metrics\Metrics\BrandStatsMetric;
 use App\Domains\Metrics\Metrics\CategoryStatsMetric;
 use App\Domains\Metrics\Metrics\CirclePackMetric;
+use App\Domains\Metrics\Metrics\CashFlowMetric;
+use App\Domains\Metrics\Metrics\SavingsRateMetric;
+use App\Domains\Metrics\Metrics\EmergencyFundStatusMetric;
+use App\Domains\Metrics\Metrics\FinancialHealthScoreMetric;
+use App\Domains\Metrics\Metrics\SpendingAlertsMetric;
+use App\Domains\Metrics\Metrics\TopExpensesMetric;
+use App\Domains\Metrics\Metrics\RecurringExpensesMetric;
+use App\Domains\Metrics\Metrics\CashRunwayMetric;
+use App\Domains\Metrics\Metrics\IncomeStabilityMetric;
+use App\Domains\Metrics\Metrics\BudgetAllocationMetric;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -215,6 +225,66 @@ class MetricsController extends Controller
     public function circlePack(Request $request): JsonResponse
     {
         $metric = new CirclePackMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function cashFlow(Request $request): JsonResponse
+    {
+        $metric = new CashFlowMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function savingsRate(Request $request): JsonResponse
+    {
+        $metric = new SavingsRateMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function emergencyFundStatus(Request $request): JsonResponse
+    {
+        $metric = new EmergencyFundStatusMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function financialHealthScore(Request $request): JsonResponse
+    {
+        $metric = new FinancialHealthScoreMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function spendingAlerts(Request $request): JsonResponse
+    {
+        $metric = new SpendingAlertsMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function topExpenses(Request $request): JsonResponse
+    {
+        $metric = new TopExpensesMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function recurringExpenses(Request $request): JsonResponse
+    {
+        $metric = new RecurringExpensesMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function cashRunway(Request $request): JsonResponse
+    {
+        $metric = new CashRunwayMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function incomeStability(Request $request): JsonResponse
+    {
+        $metric = new IncomeStabilityMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function budgetAllocation(Request $request): JsonResponse
+    {
+        $metric = new BudgetAllocationMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 }

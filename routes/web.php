@@ -80,6 +80,16 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/brand-stats', [MetricsController::class, 'brandStats']);
             Route::get('/category-stats', [MetricsController::class, 'categoryStats']);
             Route::get('/circle-pack', [MetricsController::class, 'circlePack']);
+            Route::get('/cash-flow', [MetricsController::class, 'cashFlow']);
+            Route::get('/savings-rate', [MetricsController::class, 'savingsRate']);
+            Route::get('/emergency-fund-status', [MetricsController::class, 'emergencyFundStatus']);
+            Route::get('/financial-health-score', [MetricsController::class, 'financialHealthScore']);
+            Route::get('/spending-alerts', [MetricsController::class, 'spendingAlerts']);
+            Route::get('/top-expenses', [MetricsController::class, 'topExpenses']);
+            Route::get('/recurring-expenses', [MetricsController::class, 'recurringExpenses']);
+            Route::get('/cash-runway', [MetricsController::class, 'cashRunway']);
+            Route::get('/income-stability', [MetricsController::class, 'incomeStability']);
+            Route::get('/budget-allocation', [MetricsController::class, 'budgetAllocation']);
         });
     });
 

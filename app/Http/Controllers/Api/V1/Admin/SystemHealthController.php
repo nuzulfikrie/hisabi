@@ -6,21 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
 class SystemHealthController extends Controller
 {
     public function index(): JsonResponse
     {
-        // Check if user is admin
-        if (!$this->isAdmin()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         return response()->json([
             'data' => [
                 'database' => $this->getDatabaseStatus(),
@@ -57,7 +49,6 @@ class SystemHealthController extends Controller
     private function getStorageStatus(): array
     {
         try {
-            $disk = Storage::disk('local');
             $path = storage_path('app');
             
             $totalSpace = disk_total_space($path);
@@ -91,13 +82,9 @@ class SystemHealthController extends Controller
             if ($connection === 'database') {
                 $pending = DB::table('jobs')->count();
                 $failed = DB::table('failed_jobs')->count();
-            } elseif ($connection === 'redis') {
-                // For Redis, we can check the queue length
-                $pending = 'N/A';
-                $failed = DB::table('failed_jobs')->count();
             } else {
-                $pending = 'N/A';
                 $failed = DB::table('failed_jobs')->count();
+                $pending = 'N/A';
             }
 
             return [
@@ -126,29 +113,10 @@ class SystemHealthController extends Controller
                 ];
             }
 
-            $lines = [];
-            $handle = fopen($logPath, 'r');
-            if ($handle) {
-                // Read last 100 lines
-                $pos = -2;
-                $lineCount = 0;
-                $maxLines = 100;
-                
-                while ($lineCount < $maxLines && fseek($handle, $pos, SEEK_END) !== -1) {
-                    $char = fgetc($handle);
-                    if ($char === "\n") {
-                        $line = fgets($handle);
-                        if ($line !== false) {
-                            $lines[] = trim($line);
-                        }
-                        $lineCount++;
-                    }
-                    $pos--;
-                }
-                fclose($handle);
-            }
-
+            $content = file_get_contents($logPath);
+            $lines = explode("\n", $content);
             $lines = array_reverse($lines);
+            
             $errors = [];
             $errorCount = 0;
             
@@ -178,12 +146,7 @@ class SystemHealthController extends Controller
     private function getUserStats(): array
     {
         $totalUsers = User::count();
-        $activeToday = User::whereDate('last_login_at', today())->orWhereDate('updated_at', today())->count();
-        
-        // Alternative if last_login_at doesn't exist
-        if ($activeToday === 0) {
-            $activeToday = User::whereDate('updated_at', today())->count();
-        }
+        $activeToday = User::whereDate('updated_at', today())->count();
 
         return [
             'total' => $totalUsers,
@@ -230,16 +193,5 @@ class SystemHealthController extends Controller
         $bytes /= 1024 ** $pow;
         
         return round($bytes, $precision) . ' ' . $units[$pow];
-    }
-
-    private function isAdmin(): bool
-    {
-        $user = Auth::user();
-        
-        if (!$user) {
-            return false;
-        }
-
-        return $user->isAdmin();
     }
 }

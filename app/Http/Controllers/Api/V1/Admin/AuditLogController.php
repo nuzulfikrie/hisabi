@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Services\AuditService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AuditLogController extends Controller
 {
@@ -16,11 +15,6 @@ class AuditLogController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        // Check if user is admin
-        if (!$this->isAdmin()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         $filters = [];
 
         if ($request->has('user_id')) {
@@ -64,11 +58,6 @@ class AuditLogController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        // Check if user is admin
-        if (!$this->isAdmin()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         $log = \App\Domains\Audit\Models\AuditLog::with('user')->findOrFail($id);
 
         return response()->json([
@@ -79,11 +68,6 @@ class AuditLogController extends Controller
 
     public function actions(): JsonResponse
     {
-        // Check if user is admin
-        if (!$this->isAdmin()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         $actions = \App\Domains\Audit\Models\AuditLog::select('action')
             ->distinct()
             ->pluck('action');
@@ -95,11 +79,6 @@ class AuditLogController extends Controller
 
     public function entityTypes(): JsonResponse
     {
-        // Check if user is admin
-        if (!$this->isAdmin()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         $entityTypes = \App\Domains\Audit\Models\AuditLog::select('entity_type')
             ->distinct()
             ->pluck('entity_type');
@@ -107,17 +86,5 @@ class AuditLogController extends Controller
         return response()->json([
             'data' => $entityTypes,
         ]);
-    }
-
-    private function isAdmin(): bool
-    {
-        $user = Auth::user();
-        
-        if (!$user) {
-            return false;
-        }
-
-        // Check for is_admin attribute or role
-        return $user->is_admin ?? false;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Domains\Audit\Models;
 
 use App\Models\User;
+use Database\Factories\Domains\Audit\Models\AuditLogFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -41,6 +42,11 @@ class AuditLog extends Model
                 $model->id = (string) Str::uuid();
             }
         });
+    }
+
+    protected static function newFactory(): AuditLogFactory
+    {
+        return AuditLogFactory::new();
     }
 
     public function user(): BelongsTo

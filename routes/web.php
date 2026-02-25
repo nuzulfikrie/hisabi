@@ -122,7 +122,7 @@ Route::middleware(['auth'])->group(function () {
         });
 
         // Admin routes
-        Route::prefix('admin')->group(function () {
+        Route::prefix('admin')->middleware(['admin'])->group(function () {
             Route::get('/audit-logs', [AuditLogController::class, 'index']);
             Route::get('/audit-logs/{id}', [AuditLogController::class, 'show']);
             Route::get('/audit-logs/actions', [AuditLogController::class, 'actions']);

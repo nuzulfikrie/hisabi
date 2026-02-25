@@ -6,3 +6,6 @@ export * from './sms.js';
 export * from './user.js';
 export * from './tags.js';
 export * from './admin.js';
+export * from './settings.js';
+export * from './apiKeys.js';
+export * from './smsParser.js';

@@ -32,6 +32,15 @@ class TransactionResource extends JsonResource
                     ] : null,
                 ];
             }),
+            'tags' => $this->whenLoaded('tags', function () {
+                return $this->tags->map(function ($tag) {
+                    return [
+                        'uuid' => $tag->uuid,
+                        'name' => $tag->name,
+                        'color' => $tag->color,
+                    ];
+                });
+            }),
         ];
     }
 }

@@ -18,6 +18,8 @@ class CreateTransactionRequest extends FormRequest
             'brand_id' => 'required|integer|exists:brands,id',
             'created_at' => 'required|date',
             'note' => 'nullable|string|max:1000',
+            'tags' => 'nullable|array',
+            'tags.*' => 'string|uuid|exists:tags,uuid',
         ];
     }
 }

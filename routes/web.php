@@ -46,6 +46,12 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/sms/{id}', [\App\Http\Controllers\Api\V1\SmsController::class, 'update']);
         Route::delete('/sms/{id}', [\App\Http\Controllers\Api\V1\SmsController::class, 'destroy']);
         Route::get('/categories/all', [\App\Http\Controllers\Api\V1\CategoryController::class, 'all']);
+        Route::get('/tags', [\App\Http\Controllers\Api\V1\TagController::class, 'index']);
+        Route::get('/tags/all', [\App\Http\Controllers\Api\V1\TagController::class, 'all']);
+        Route::post('/tags', [\App\Http\Controllers\Api\V1\TagController::class, 'store']);
+        Route::put('/tags/{uuid}', [\App\Http\Controllers\Api\V1\TagController::class, 'update']);
+        Route::delete('/tags/{uuid}', [\App\Http\Controllers\Api\V1\TagController::class, 'destroy']);
+        Route::get('/tags/{uuid}/transactions', [\App\Http\Controllers\Api\V1\TagController::class, 'transactions']);
         Route::post('/categories', [\App\Http\Controllers\Api\V1\CategoryController::class, 'store']);
         Route::put('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'destroy']);

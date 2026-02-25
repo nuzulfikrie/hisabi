@@ -4,3 +4,4 @@ export * from './brands.js';
 export * from './transactions.js';
 export * from './sms.js';
 export * from './user.js';
+export * from './tags.js';

@@ -16,6 +16,16 @@ import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
 import { getAllCategories } from '@/Api/categories';
 import { getAllBrands } from '@/Api/brands';
 
+// Phase 6 Widgets
+import CashFlowWidget from '@/components/Domain/CashFlowWidget';
+import SavingsRateWidget from '@/components/Domain/SavingsRateWidget';
+import FinancialHealthScoreWidget from '@/components/Domain/FinancialHealthScoreWidget';
+import SpendingAlertsWidget from '@/components/Domain/SpendingAlertsWidget';
+import EmergencyFundWidget from '@/components/Domain/EmergencyFundWidget';
+import TopExpensesWidget from '@/components/Domain/TopExpensesWidget';
+import RecurringExpensesWidget from '@/components/Domain/RecurringExpensesWidget';
+import QuickActionsWidget from '@/components/Domain/QuickActionsWidget';
+
 export default function Dashboard({ auth, hasData }: any) {
     const [allCategories, setAllCategories] = useState<any[]>([]);
     const [allBrands, setAllBrands] = useState<any[]>([]);
@@ -147,6 +157,62 @@ export default function Dashboard({ auth, hasData }: any) {
                                     metric="totalExpensesTrend"
                                     dateRange={dateRange}
                                 />
+                            </div>
+
+                            {/* Phase 6: Financial Health Widgets */}
+                            <SectionDivider title="Financial Health" />
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <CashFlowWidget
+                                    key={`cashFlow-${refreshKey}`}
+                                    dateRange={dateRange}
+                                />
+                                <SavingsRateWidget
+                                    key={`savingsRate-${refreshKey}`}
+                                    dateRange={dateRange}
+                                />
+                                <EmergencyFundWidget
+                                    key={`emergencyFund-${refreshKey}`}
+                                    dateRange={dateRange}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FinancialHealthScoreWidget
+                                    key={`financialHealth-${refreshKey}`}
+                                    dateRange={dateRange}
+                                />
+                                <SpendingAlertsWidget
+                                    key={`spendingAlerts-${refreshKey}`}
+                                    dateRange={dateRange}
+                                />
+                            </div>
+
+                            {/* Phase 6: Insights & Actions */}
+                            <SectionDivider title="Insights & Actions" />
+
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                                <div className="lg:col-span-2">
+                                    <TopExpensesWidget
+                                        key={`topExpenses-${refreshKey}`}
+                                        dateRange={dateRange}
+                                        limit={5}
+                                    />
+                                </div>
+                                <div className="space-y-4">
+                                    <RecurringExpensesWidget
+                                        key={`recurringExpenses-${refreshKey}`}
+                                        dateRange={dateRange}
+                                    />
+                                    <QuickActionsWidget
+                                        key={`quickActions-${refreshKey}`}
+                                        onAddTransaction={() => {
+                                            // Trigger the RecordTransactionButton
+                                            const btn = document.querySelector('[data-testid="record-transaction-btn"]') as HTMLElement;
+                                            btn?.click();
+                                        }}
+                                    />
+                                </div>
                             </div>
 
 

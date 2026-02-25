@@ -59,6 +59,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/ai/chat', [\App\Http\Controllers\Api\V1\AIController::class, 'chat']);
         Route::put('/user/profile', [\App\Http\Controllers\Api\V1\UserController::class, 'updateProfile']);
 
+        Route::post('/import/csv', [\App\Http\Controllers\Api\V1\ImportController::class, 'importCsv']);
+        Route::post('/import/excel', [\App\Http\Controllers\Api\V1\ImportController::class, 'importExcel']);
+        Route::get('/import/template', [\App\Http\Controllers\Api\V1\ImportController::class, 'downloadTemplate']);
+
         Route::prefix('metrics')->group(function () {
             Route::get('/total-income', [MetricsController::class, 'totalIncome']);
             Route::get('/total-expenses', [MetricsController::class, 'totalExpenses']);

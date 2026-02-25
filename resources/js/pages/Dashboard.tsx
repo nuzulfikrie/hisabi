@@ -25,6 +25,7 @@ import EmergencyFundWidget from '@/components/Domain/EmergencyFundWidget';
 import TopExpensesWidget from '@/components/Domain/TopExpensesWidget';
 import RecurringExpensesWidget from '@/components/Domain/RecurringExpensesWidget';
 import QuickActionsWidget from '@/components/Domain/QuickActionsWidget';
+import FinancialProjectionChart from '@/components/Domain/FinancialProjectionChart';
 
 export default function Dashboard({ auth, hasData }: any) {
     const [allCategories, setAllCategories] = useState<any[]>([]);
@@ -213,6 +214,16 @@ export default function Dashboard({ auth, hasData }: any) {
                                         }}
                                     />
                                 </div>
+                            </div>
+
+                            {/* Phase 6: Financial Forecast */}
+                            <SectionDivider title="Financial Forecast" />
+
+                            <div className="w-full">
+                                <FinancialProjectionChart
+                                    key={`financialProjection-${refreshKey}`}
+                                    dateRange={dateRange}
+                                />
                             </div>
 
 

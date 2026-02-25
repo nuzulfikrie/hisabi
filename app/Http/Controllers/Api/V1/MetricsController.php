@@ -39,6 +39,7 @@ use App\Domains\Metrics\Metrics\RecurringExpensesMetric;
 use App\Domains\Metrics\Metrics\CashRunwayMetric;
 use App\Domains\Metrics\Metrics\IncomeStabilityMetric;
 use App\Domains\Metrics\Metrics\BudgetAllocationMetric;
+use App\Domains\Metrics\Metrics\FinancialProjectionMetric;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -285,6 +286,17 @@ class MetricsController extends Controller
     public function budgetAllocation(Request $request): JsonResponse
     {
         $metric = new BudgetAllocationMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function financialProjection(Request $request): JsonResponse
+    {
+        $metric = new FinancialProjectionMetric(
+            $request->query('from'),
+            $request->query('to'),
+            (int) $request->query('months', 12),
+            $request->query('scenario', 'realistic')
+        );
         return response()->json(['data' => $metric->calculate()]);
     }
 }

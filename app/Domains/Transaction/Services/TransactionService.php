@@ -35,22 +35,39 @@ class TransactionService
                     $query->whereDate('created_at', '<=', $value);
                 }),
             ])
-            ->allowedIncludes(['brand.category'])
+            ->allowedIncludes(['brand.category', 'tags'])
             ->allowedSorts(['id', 'amount', 'created_at'])
             ->defaultSort('-id')
-            ->with(['brand.category'])
+            ->with(['brand.category', 'tags'])
             ->paginate($perPage);
     }
 
     public function create(array $data): Transaction
     {
-        return Transaction::query()->create($data);
+        $tagUuids = $data['tags'] ?? [];
+        unset($data['tags']);
+
+        $transaction = Transaction::query()->create($data);
+
+        if (!empty($tagUuids)) {
+            $transaction->syncTags($tagUuids);
+        }
+
+        return $transaction->fresh();
     }
 
     public function update(int $id, array $data): Transaction
     {
+        $tagUuids = $data['tags'] ?? [];
+        unset($data['tags']);
+
         $transaction = Transaction::query()->findOrFail($id);
         $transaction->update($data);
+
+        if (array_key_exists('tags', $data) || !empty($tagUuids)) {
+            $transaction->syncTags($tagUuids);
+        }
+
         return $transaction->fresh();
     }
 

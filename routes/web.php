@@ -10,6 +10,8 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Api\V1\MetricsController;
+use App\Http\Controllers\Api\V1\Admin\AuditLogController;
+use App\Http\Controllers\Api\V1\Admin\SystemHealthController;
 
 Route::redirect('/', '/dashboard');
 
@@ -46,12 +48,38 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/sms/{id}', [\App\Http\Controllers\Api\V1\SmsController::class, 'update']);
         Route::delete('/sms/{id}', [\App\Http\Controllers\Api\V1\SmsController::class, 'destroy']);
         Route::get('/categories/all', [\App\Http\Controllers\Api\V1\CategoryController::class, 'all']);
+        Route::get('/tags', [\App\Http\Controllers\Api\V1\TagController::class, 'index']);
+        Route::get('/tags/all', [\App\Http\Controllers\Api\V1\TagController::class, 'all']);
+        Route::post('/tags', [\App\Http\Controllers\Api\V1\TagController::class, 'store']);
+        Route::put('/tags/{uuid}', [\App\Http\Controllers\Api\V1\TagController::class, 'update']);
+        Route::delete('/tags/{uuid}', [\App\Http\Controllers\Api\V1\TagController::class, 'destroy']);
+        Route::get('/tags/{uuid}/transactions', [\App\Http\Controllers\Api\V1\TagController::class, 'transactions']);
         Route::post('/categories', [\App\Http\Controllers\Api\V1\CategoryController::class, 'store']);
         Route::put('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'destroy']);
         Route::get('/budgets', [\App\Http\Controllers\Api\V1\BudgetController::class, 'index']);
         Route::post('/ai/chat', [\App\Http\Controllers\Api\V1\AIController::class, 'chat']);
         Route::put('/user/profile', [\App\Http\Controllers\Api\V1\UserController::class, 'updateProfile']);
+
+        Route::post('/import/csv', [\App\Http\Controllers\Api\V1\ImportController::class, 'importCsv']);
+        Route::post('/import/excel', [\App\Http\Controllers\Api\V1\ImportController::class, 'importExcel']);
+        Route::get('/import/template', [\App\Http\Controllers\Api\V1\ImportController::class, 'downloadTemplate']);
+
+        // User Preferences
+        Route::get('/user/preferences', [\App\Http\Controllers\Api\V1\SettingsController::class, 'getPreferences']);
+        Route::put('/user/preferences', [\App\Http\Controllers\Api\V1\SettingsController::class, 'updatePreferences']);
+
+        // API Keys
+        Route::get('/api-keys', [\App\Http\Controllers\Api\V1\ApiKeyController::class, 'index']);
+        Route::post('/api-keys', [\App\Http\Controllers\Api\V1\ApiKeyController::class, 'store']);
+        Route::delete('/api-keys/{uuid}', [\App\Http\Controllers\Api\V1\ApiKeyController::class, 'destroy']);
+
+        // SMS Parser Rules
+        Route::get('/sms-parser-rules', [\App\Http\Controllers\Api\V1\SmsParserController::class, 'index']);
+        Route::post('/sms-parser-rules', [\App\Http\Controllers\Api\V1\SmsParserController::class, 'store']);
+        Route::put('/sms-parser-rules/{uuid}', [\App\Http\Controllers\Api\V1\SmsParserController::class, 'update']);
+        Route::delete('/sms-parser-rules/{uuid}', [\App\Http\Controllers\Api\V1\SmsParserController::class, 'destroy']);
+        Route::post('/sms-parser-rules/test', [\App\Http\Controllers\Api\V1\SmsParserController::class, 'test']);
 
         Route::prefix('metrics')->group(function () {
             Route::get('/total-income', [MetricsController::class, 'totalIncome']);
@@ -80,6 +108,26 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/brand-stats', [MetricsController::class, 'brandStats']);
             Route::get('/category-stats', [MetricsController::class, 'categoryStats']);
             Route::get('/circle-pack', [MetricsController::class, 'circlePack']);
+            Route::get('/cash-flow', [MetricsController::class, 'cashFlow']);
+            Route::get('/savings-rate', [MetricsController::class, 'savingsRate']);
+            Route::get('/emergency-fund-status', [MetricsController::class, 'emergencyFundStatus']);
+            Route::get('/financial-health-score', [MetricsController::class, 'financialHealthScore']);
+            Route::get('/spending-alerts', [MetricsController::class, 'spendingAlerts']);
+            Route::get('/top-expenses', [MetricsController::class, 'topExpenses']);
+            Route::get('/recurring-expenses', [MetricsController::class, 'recurringExpenses']);
+            Route::get('/cash-runway', [MetricsController::class, 'cashRunway']);
+            Route::get('/income-stability', [MetricsController::class, 'incomeStability']);
+            Route::get('/budget-allocation', [MetricsController::class, 'budgetAllocation']);
+            Route::get('/financial-projection', [MetricsController::class, 'financialProjection']);
+        });
+
+        // Admin routes
+        Route::prefix('admin')->middleware(['admin'])->group(function () {
+            Route::get('/audit-logs', [AuditLogController::class, 'index']);
+            Route::get('/audit-logs/{id}', [AuditLogController::class, 'show']);
+            Route::get('/audit-logs/actions', [AuditLogController::class, 'actions']);
+            Route::get('/audit-logs/entity-types', [AuditLogController::class, 'entityTypes']);
+            Route::get('/system-health', [SystemHealthController::class, 'index']);
         });
     });
 

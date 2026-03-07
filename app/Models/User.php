@@ -26,6 +26,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_admin',
         'status',
         'role',
         'locale',
@@ -56,6 +57,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_admin' => 'boolean',
         'telegram_verified_at' => 'datetime',
         'last_login_at' => 'datetime',
         'status' => UserStatus::class,
@@ -89,5 +91,13 @@ class User extends Authenticatable
         $this->update(['telegram_verification_code' => $code]);
 
         return $code;
+    }
+
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->is_admin ?? false;
     }
 }

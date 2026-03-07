@@ -41,7 +41,7 @@ export const getTransactions = async (page, searchQuery, filters = {}) => {
     };
 }
 
-export const createTransaction = async ({amount, brandId, createdAt, note}) => {
+export const createTransaction = async ({amount, brandId, createdAt, note, tags = []}) => {
     const response = await fetch('/api/v1/transactions', {
         method: 'POST',
         headers: {
@@ -54,7 +54,8 @@ export const createTransaction = async ({amount, brandId, createdAt, note}) => {
             amount,
             brand_id: brandId,
             created_at: createdAt,
-            note
+            note,
+            tags
         })
     });
 
@@ -69,7 +70,7 @@ export const createTransaction = async ({amount, brandId, createdAt, note}) => {
     };
 }
 
-export const updateTransaction = async ({id, amount, brandId, createdAt, note}) => {
+export const updateTransaction = async ({id, amount, brandId, createdAt, note, tags = []}) => {
     const response = await fetch(`/api/v1/transactions/${id}`, {
         method: 'PUT',
         headers: {
@@ -82,7 +83,8 @@ export const updateTransaction = async ({id, amount, brandId, createdAt, note}) 
             amount,
             brand_id: brandId,
             created_at: createdAt,
-            note
+            note,
+            tags
         })
     });
 

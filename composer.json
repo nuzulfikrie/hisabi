@@ -18,7 +18,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10",
         "lorisleiva/laravel-actions": "^2.9",
-        "maatwebsite/excel": "^3.1",
+        "phpoffice/phpspreadsheet": "^2.0",
         "prism-php/prism": "^0.90.0",
         "spatie/laravel-query-builder": "^6.3",
         "tightenco/ziggy": "^1.6"

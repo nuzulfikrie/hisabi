@@ -3,6 +3,7 @@
 namespace App\Domains\Transaction\Models;
 
 use App\Domains\Brand\Models\Brand;
+use App\Domains\Tag\Models\Tag;
 use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,6 +34,12 @@ class Transaction extends Model
         return $this->belongsTo(Brand::class);
     }
 
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'tag_transaction', 'transaction_id', 'tag_uuid')
+            ->withTimestamps();
+    }
+
     public function scopeExpenses($query)
     {
         return $query->whereHas('brand.category', function ($query) {
@@ -59,6 +66,21 @@ class Transaction extends Model
         return $query->whereHas('brand.category', function ($query) {
             return $query->where('type', Category::INVESTMENT);
         });
+    }
+
+    public function attachTag(Tag $tag): void
+    {
+        $this->tags()->syncWithoutDetaching([$tag->uuid]);
+    }
+
+    public function detachTag(Tag $tag): void
+    {
+        $this->tags()->detach($tag->uuid);
+    }
+
+    public function syncTags(array $tagUuids): void
+    {
+        $this->tags()->sync($tagUuids);
     }
 
     public static function tryCreateFromSms($sms)

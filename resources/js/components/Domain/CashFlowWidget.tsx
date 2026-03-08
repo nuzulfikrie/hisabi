@@ -58,14 +58,26 @@ export default function CashFlowWidget({ dateRange }: CashFlowWidgetProps) {
         );
     }
 
+    // Handle missing or incomplete data
+    const safeData = {
+        income: data.income ?? 0,
+        expenses: data.expenses ?? 0,
+        net_cash_flow: data.net_cash_flow ?? 0,
+        previous_period: {
+            income: data.previous_period?.income ?? 0,
+            expenses: data.previous_period?.expenses ?? 0,
+            net_cash_flow: data.previous_period?.net_cash_flow ?? 0,
+        }
+    };
+
     const getChangePercentage = (current: number, previous: number) => {
-        if (!previous) return 0;
+        if (!previous || previous === 0) return 0;
         return (((current - previous) / previous) * 100).toFixed(1);
     };
 
-    const incomeChange = parseFloat(getChangePercentage(data.income, data.previous_period.income));
-    const expenseChange = parseFloat(getChangePercentage(data.expenses, data.previous_period.expenses));
-    const netChange = parseFloat(getChangePercentage(data.net_cash_flow, data.previous_period.net_cash_flow));
+    const incomeChange = parseFloat(getChangePercentage(safeData.income, safeData.previous_period.income));
+    const expenseChange = parseFloat(getChangePercentage(safeData.expenses, safeData.previous_period.expenses));
+    const netChange = parseFloat(getChangePercentage(safeData.net_cash_flow, safeData.previous_period.net_cash_flow));
 
     return (
         <Card className="relative p-6">
@@ -78,7 +90,7 @@ export default function CashFlowWidget({ dateRange }: CashFlowWidgetProps) {
                 <div className="text-center">
                     <p className="text-xs text-gray-500 mb-1">Income</p>
                     <p className="text-xl font-semibold text-green-600">
-                        {getAppCurrency()} {formatNumber(data.income)}
+                        {getAppCurrency()} {formatNumber(safeData.income)}
                     </p>
                     <div className="flex items-center justify-center mt-1 text-xs">
                         {incomeChange >= 0 ? (
@@ -96,7 +108,7 @@ export default function CashFlowWidget({ dateRange }: CashFlowWidgetProps) {
                 <div className="text-center">
                     <p className="text-xs text-gray-500 mb-1">Expenses</p>
                     <p className="text-xl font-semibold text-red-600">
-                        {getAppCurrency()} {formatNumber(data.expenses)}
+                        {getAppCurrency()} {formatNumber(safeData.expenses)}
                     </p>
                     <div className="flex items-center justify-center mt-1 text-xs">
                         {expenseChange >= 0 ? (
@@ -113,8 +125,8 @@ export default function CashFlowWidget({ dateRange }: CashFlowWidgetProps) {
                 {/* Net Cash Flow */}
                 <div className="text-center">
                     <p className="text-xs text-gray-500 mb-1">Net Flow</p>
-                    <p className={`text-xl font-semibold ${data.net_cash_flow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {getAppCurrency()} {formatNumber(Math.abs(data.net_cash_flow))}
+                    <p className={`text-xl font-semibold ${safeData.net_cash_flow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {getAppCurrency()} {formatNumber(Math.abs(safeData.net_cash_flow))}
                     </p>
                     <div className="flex items-center justify-center mt-1 text-xs">
                         {netChange >= 0 ? (
@@ -134,8 +146,8 @@ export default function CashFlowWidget({ dateRange }: CashFlowWidgetProps) {
                 <div className="flex items-center gap-2 text-sm">
                     <span className="text-gray-500">vs Previous Period</span>
                     <ArrowRightIcon className="h-4 w-4 text-gray-400" />
-                    <span className={`font-medium ${data.net_cash_flow >= data.previous_period.net_cash_flow ? 'text-green-600' : 'text-red-600'}`}>
-                        {data.net_cash_flow >= data.previous_period.net_cash_flow ? 'Improved' : 'Declined'}
+                    <span className={`font-medium ${safeData.net_cash_flow >= safeData.previous_period.net_cash_flow ? 'text-green-600' : 'text-red-600'}`}>
+                        {safeData.net_cash_flow >= safeData.previous_period.net_cash_flow ? 'Improved' : 'Declined'}
                     </span>
                 </div>
             </div>

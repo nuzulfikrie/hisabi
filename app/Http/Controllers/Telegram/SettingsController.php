@@ -19,6 +19,7 @@ class SettingsController extends Controller
      */
     public function index(): Response
     {
+        \Log::info('Telegram SettingsController@index called');
         $user = auth()->user();
 
         // Get recent telegram transactions (last 10)

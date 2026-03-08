@@ -17,7 +17,8 @@ import {
     TrashIcon,
     PlusIcon,
     CheckIcon,
-    PlayIcon
+    PlayIcon,
+    ArrowRightIcon
 } from "@phosphor-icons/react";
 
 import { Button } from '@/components/ui/button';
@@ -168,6 +169,11 @@ const settingsNavItems = [
                 title: "Product Updates",
                 value: "product-updates",
                 icon: BellRingingIcon,
+            },
+            {
+                title: "Telegram",
+                value: "telegram",
+                icon: ChatCircleDotsIcon,
             },
             {
                 title: "Feedback",
@@ -871,7 +877,7 @@ function SmsParserRulesSection() {
                                 rows={3}
                             />
                             <p className="text-xs text-muted-foreground">
-                                Use named groups like (?P<amount>...) and (?P<description>...) to capture data.
+                                {'Use named groups like (?P<'}amount{'>)... and (?P<'}description{'>)... to capture data.'}
                             </p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -1268,10 +1274,26 @@ export default function Index({ auth }: { auth: { user: User } }) {
                                 <Card>
                                     <CardHeader>
                                         <CardTitle>Import</CardTitle>
-                                        <CardDescription>Import your data</CardDescription>
+                                        <CardDescription>Import transactions from CSV or Excel</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <p className="text-muted-foreground">Coming soon...</p>
+                                        <p className="text-muted-foreground mb-4">
+                                            Import transactions from CSV or Excel files to quickly add multiple records.
+                                        </p>
+                                        <div className="flex flex-wrap gap-4">
+                                            <Button asChild>
+                                                <Link href="/settings/import">
+                                                    Go to Import Page
+                                                    <ArrowRightIcon className="ml-2 h-4 w-4" />
+                                                </Link>
+                                            </Button>
+                                            <Button variant="outline" asChild>
+                                                <a href="/import/template?format=csv">
+                                                    <DownloadIcon className="mr-2 h-4 w-4" />
+                                                    Download CSV Template
+                                                </a>
+                                            </Button>
+                                        </div>
                                     </CardContent>
                                 </Card>
                             )}
@@ -1280,10 +1302,20 @@ export default function Index({ auth }: { auth: { user: User } }) {
                                 <Card>
                                     <CardHeader>
                                         <CardTitle>Export</CardTitle>
-                                        <CardDescription>Export your data</CardDescription>
+                                        <CardDescription>Export your transactions and reports</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <p className="text-muted-foreground">Coming soon...</p>
+                                        <p className="text-muted-foreground mb-4">
+                                            Export your transaction history and financial reports in CSV or Excel format.
+                                        </p>
+                                        <div className="flex flex-wrap gap-4">
+                                            <Button asChild>
+                                                <Link href="/exports">
+                                                    Go to Export Page
+                                                    <ArrowRightIcon className="ml-2 h-4 w-4" />
+                                                </Link>
+                                            </Button>
+                                        </div>
                                     </CardContent>
                                 </Card>
                             )}
@@ -1295,7 +1327,14 @@ export default function Index({ auth }: { auth: { user: User } }) {
                                         <CardDescription>Manage transaction tags</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <p className="text-muted-foreground">Coming soon...</p>
+                                        <p className="text-muted-foreground mb-4">
+                                            Create and manage tags to organize your transactions
+                                        </p>
+                                        <Button asChild>
+                                            <Link href="/settings/tags">
+                                                Manage Tags
+                                            </Link>
+                                        </Button>
                                     </CardContent>
                                 </Card>
                             )}
@@ -1308,6 +1347,26 @@ export default function Index({ auth }: { auth: { user: User } }) {
                                     </CardHeader>
                                     <CardContent>
                                         <p className="text-muted-foreground">Coming soon...</p>
+                                    </CardContent>
+                                </Card>
+                            )}
+
+                            {activeTab === 'telegram' && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Telegram Bot</CardTitle>
+                                        <CardDescription>Connect your Telegram account to record transactions via chat</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p className="text-muted-foreground mb-4">
+                                            Link your Telegram account to quickly add transactions, scan receipts, and get notifications via the Hisabi Bot.
+                                        </p>
+                                        <Button asChild>
+                                            <Link href="/settings/telegram">
+                                                Go to Telegram Settings
+                                                <ArrowRightIcon className="ml-2 h-4 w-4" />
+                                            </Link>
+                                        </Button>
                                     </CardContent>
                                 </Card>
                             )}

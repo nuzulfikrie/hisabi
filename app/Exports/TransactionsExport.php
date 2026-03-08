@@ -44,8 +44,12 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping
 
     public function collection()
     {
-        $query = Transaction::query()
-            ->where('user_id', Auth::id());
+        $query = Transaction::query();
+
+        // Only filter by user_id if Auth is available
+        if (Auth::check()) {
+            $query->where('user_id', Auth::id());
+        }
 
         if (! empty($this->filters['start_date'])) {
             $query->whereDate('created_at', '>=', $this->filters['start_date']);
@@ -59,7 +63,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping
             $query->where('brand_id', $this->filters['brand_id']);
         }
 
-        return $query->with(['brand', 'brand.category'])->get();
+        return $query->with(['brand', 'brand.category'])->orderByDesc('created_at')->get();
     }
 
     public function headings(): array
@@ -67,8 +71,10 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping
         return [
             'ID',
             'Date',
+            'Description',
             'Brand',
             'Category',
+            'Type',
             'Amount',
             'Created At',
         ];
@@ -79,8 +85,10 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping
         return [
             $transaction->id,
             $transaction->created_at->format('Y-m-d'),
+            $transaction->description ?? $transaction->brand?->name,
             $transaction->brand?->name,
             $transaction->brand?->category?->name ?? $transaction->brand?->category?->type,
+            $transaction->type ?? '',
             $transaction->amount,
             $transaction->created_at->format('Y-m-d H:i:s'),
         ];

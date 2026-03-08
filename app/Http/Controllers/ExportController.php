@@ -9,8 +9,13 @@ use App\Exports\ReportsExport;
 use App\Exports\TransactionsExport;
 use App\Http\Requests\ExportReportRequest;
 use App\Http\Requests\ExportTransactionsRequest;
+use App\Jobs\ExportTransactionsJob;
 use App\Services\Exports\TransactionExportService;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
@@ -26,29 +31,85 @@ class ExportController extends Controller
     {
         return Inertia::render('Exports/Index');
     }
+
     /**
      * Export transactions in the requested format.
+     * Offloads to a queue job for async processing.
      */
-    public function transactions(ExportTransactionsRequest $request): BinaryFileResponse|StreamedResponse
+    public function transactions(ExportTransactionsRequest $request): JsonResponse
     {
         $format = ExportFormat::tryFrom($request->validated('format', ExportFormat::EXCEL->value));
         $filters = $request->only(['start_date', 'end_date', 'brand_id']);
 
-        if ($format === ExportFormat::CSV) {
-            return $this->exportTransactionsAsCsv($filters);
+        // Apply default one month window if no dates provided
+        if (empty($filters['start_date']) || empty($filters['end_date'])) {
+            $filters['start_date'] = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $filters['end_date'] = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
-        // Default to Excel
-        $filename = export_filename('transactions', 'xlsx');
+        // Generate unique filename
+        $extension = $format === ExportFormat::CSV ? 'csv' : 'xlsx';
+        $filename = 'transactions_' . now()->format('Ymd_His') . '_' . Str::random(8) . '.' . $extension;
+        $filePath = 'exports/' . Auth::id() . '/' . $filename;
 
-        return Excel::download(
-            new TransactionsExport($filters),
-            $filename
+        // Dispatch job to queue
+        ExportTransactionsJob::dispatch(
+            Auth::id(),
+            $filters,
+            $format->value,
+            $filePath
         );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Export is being processed. You will be notified when it is ready.',
+            'export_id' => basename($filename, '.' . $extension),
+        ]);
     }
 
     /**
-     * Export transactions as CSV using streaming.
+     * Download a completed export file.
+     */
+    public function download(string $filename): BinaryFileResponse|JsonResponse
+    {
+        $filePath = 'exports/' . Auth::id() . '/' . $filename;
+
+        if (!Storage::disk('local')->exists($filePath)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Export file not found or not ready yet.',
+            ], 404);
+        }
+
+        return response()->download(
+            Storage::disk('local')->path($filePath),
+            $filename,
+            [
+                'Content-Type' => str_ends_with($filename, '.csv') 
+                    ? 'text/csv' 
+                    : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]
+        )->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Check status of an export.
+     */
+    public function status(string $filename): JsonResponse
+    {
+        $filePath = 'exports/' . Auth::id() . '/' . $filename;
+        $exists = Storage::disk('local')->exists($filePath);
+
+        return response()->json([
+            'ready' => $exists,
+            'download_url' => $exists 
+                ? route('exports.download', ['filename' => $filename]) 
+                : null,
+        ]);
+    }
+
+    /**
+     * Legacy: Export transactions as CSV using streaming (for small datasets).
      *
      * @param array<string, mixed> $filters
      */
@@ -57,12 +118,15 @@ class ExportController extends Controller
         $query = Transaction::query()
             ->where('user_id', Auth::id());
 
-        if (! empty($filters['start_date'])) {
-            $query->whereDate('created_at', '>=', $filters['start_date']);
-        }
-
-        if (! empty($filters['end_date'])) {
-            $query->whereDate('created_at', '<=', $filters['end_date']);
+        // Apply default one month window if no dates provided
+        if (! empty($filters['start_date']) && ! empty($filters['end_date'])) {
+            $query->whereDate('created_at', '>=', $filters['start_date'])
+                  ->whereDate('created_at', '<=', $filters['end_date']);
+        } else {
+            $query->whereBetween('created_at', [
+                Carbon::now()->startOfMonth(),
+                Carbon::now()->endOfMonth()
+            ]);
         }
 
         if (! empty($filters['brand_id'])) {
@@ -83,6 +147,12 @@ class ExportController extends Controller
         $format = ExportFormat::tryFrom($request->validated('format', ExportFormat::EXCEL->value));
         $startDate = $request->validated('start_date');
         $endDate = $request->validated('end_date');
+
+        // Apply default to current month if no dates provided
+        if (empty($startDate) || empty($endDate)) {
+            $startDate = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
+        }
 
         // Get report sections (these already filter by authenticated user)
         $sections = app(ReportManager::class)->generate($startDate, $endDate);

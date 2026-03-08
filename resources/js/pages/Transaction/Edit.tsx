@@ -12,12 +12,21 @@ import {
     DialogContent,
     DialogTitle,
 } from '@/components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 export default function Edit({ transaction, brands, onUpdate, onDelete, onClose }) {
     const [amount, setAmount] = useState(0);
     const [createdAt, setCreatedAt] = useState('');
     const [brand, setBrand] = useState(null);
     const [note, setNote] = useState('');
+    const [type, setType] = useState('personal');
+    const [description, setDescription] = useState('');
 
     useEffect(() => {
         if (!transaction) return;
@@ -26,6 +35,8 @@ export default function Edit({ transaction, brands, onUpdate, onDelete, onClose 
         setBrand(transaction.brand);
         setCreatedAt(transaction.created_at);
         setNote(transaction.note ?? '');
+        setType(transaction.type || 'personal');
+        setDescription(transaction.description || transaction.brand?.name || '');
     }, [transaction]);
 
     const handleUpdate = () => {
@@ -37,7 +48,9 @@ export default function Edit({ transaction, brands, onUpdate, onDelete, onClose 
             amount,
             brandId: brand.id,
             createdAt,
-            note
+            note,
+            type,
+            description
         })
         .then(({ data }) => {
             onUpdate(data.transaction);
@@ -99,6 +112,38 @@ export default function Edit({ transaction, brands, onUpdate, onDelete, onClose 
                                 displayInputValue={(item) => item ? `${item.name} (${item.category?.name ?? 'N/A'})` : ''}
                                 displayOptionValue={(item) => item ? `${item.name} (${item.category?.name ?? 'N/A'})` : ''}
                             />
+                        </div>
+
+                        <div>
+                            <Label htmlFor="description">
+                                Description
+                            </Label>
+                            <Input
+                                type="text"
+                                name="description"
+                                value={description}
+                                className="mt-1"
+                                placeholder="e.g., Internet, Groceries midweek"
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
+                        </div>
+
+                        <div>
+                            <Label htmlFor="type">
+                                Type
+                            </Label>
+                            <Select
+                                value={type}
+                                onValueChange={setType}
+                            >
+                                <SelectTrigger className="mt-1 w-full">
+                                    <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="personal">Personal</SelectItem>
+                                    <SelectItem value="home">Home</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
 
                         <div>

@@ -123,7 +123,7 @@ export default function RecurringExpensesWidget({ dateRange }: RecurringExpenses
                         </span>
                     </div>
                 </div>
-                {data.unused_subscriptions.length > 0 && (
+                {(data.unused_subscriptions || []).length > 0 && (
                     <Badge variant="destructive" className="text-xs">
                         {data.unused_subscriptions.length} unused
                     </Badge>
@@ -131,7 +131,7 @@ export default function RecurringExpensesWidget({ dateRange }: RecurringExpenses
             </div>
 
             {/* Unused Subscriptions Alert */}
-            {data.unused_subscriptions.length > 0 && (
+            {(data.unused_subscriptions || []).length > 0 && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                     <div className="flex items-start gap-2">
                         <ExclamationCircleIcon className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
@@ -140,12 +140,12 @@ export default function RecurringExpensesWidget({ dateRange }: RecurringExpenses
                                 Unused Subscriptions Detected
                             </p>
                             <div className="mt-1 space-y-1">
-                                {data.unused_subscriptions.slice(0, 2).map(sub => (
+                                {(data.unused_subscriptions || []).slice(0, 2).map(sub => (
                                     <p key={sub.id} className="text-xs text-red-700">
                                         • {sub.brand} - {sub.unused_days} days unused
                                     </p>
                                 ))}
-                                {data.unused_subscriptions.length > 2 && (
+                                {(data.unused_subscriptions || []).length > 2 && (
                                     <p className="text-xs text-red-600">
                                         + {data.unused_subscriptions.length - 2} more
                                     </p>

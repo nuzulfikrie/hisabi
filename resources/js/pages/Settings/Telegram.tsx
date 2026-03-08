@@ -7,7 +7,7 @@ import {
     CopyIcon,
     ClockIcon,
     ChatTeardropTextIcon,
-    UnlinkIcon,
+    LinkBreak,
 } from "@phosphor-icons/react";
 
 import { Button } from '@/components/ui/button';
@@ -187,7 +187,7 @@ export default function Telegram() {
                                 <Dialog open={showUnlinkDialog} onOpenChange={setShowUnlinkDialog}>
                                     <DialogTrigger asChild>
                                         <Button variant="destructive" className="w-full sm:w-auto">
-                                            <UnlinkIcon className="w-4 h-4 mr-2" />
+                                            <LinkBreak className="w-4 h-4 mr-2" />
                                             Unlink Telegram Account
                                         </Button>
                                     </DialogTrigger>

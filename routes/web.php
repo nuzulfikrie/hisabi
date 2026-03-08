@@ -4,12 +4,18 @@ use Illuminate\Http\Request;
 use App\Contracts\ReportManager;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\Telegram\WebhookController;
+
+// Public routes (no auth required)
+Route::post('/telegram/webhook', [WebhookController::class, 'handle'])
+    ->name('telegram.webhook');
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Api\V1\MetricsController;
+use App\Http\Controllers\Api\V1\SpendingController;
 use App\Http\Controllers\Api\V1\Admin\AuditLogController;
 use App\Http\Controllers\Api\V1\Admin\SystemHealthController;
 
@@ -22,6 +28,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/brands', [BrandController::class, 'index'])->name('brands');
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+
+    // Telegram Settings
+    Route::get('/settings/telegram', [\App\Http\Controllers\Telegram\SettingsController::class, 'index'])->name('settings.telegram');
+    Route::post('/settings/telegram/link', [\App\Http\Controllers\Telegram\SettingsController::class, 'link'])->name('settings.telegram.link');
+    Route::post('/settings/telegram/unlink', [\App\Http\Controllers\Telegram\SettingsController::class, 'unlink'])->name('settings.telegram.unlink');
+    Route::post('/settings/telegram/generate-code', [\App\Http\Controllers\Telegram\SettingsController::class, 'generateCode'])->name('settings.telegram.generate-code');
+
+    // Import
+    Route::get('/settings/import', [\App\Http\Controllers\ImportController::class, 'index'])->name('settings.import');
+    Route::get('/import/template', [\App\Http\Controllers\ImportController::class, 'template'])->name('import.template');
+
     Route::get('/report', function (Request $request) {
         $start_date = $request->query('start_date');
         $end_date = $request->query('end_date');
@@ -119,6 +136,14 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/income-stability', [MetricsController::class, 'incomeStability']);
             Route::get('/budget-allocation', [MetricsController::class, 'budgetAllocation']);
             Route::get('/financial-projection', [MetricsController::class, 'financialProjection']);
+        });
+
+        // Spending Tracker Routes
+        Route::prefix('spending')->group(function () {
+            Route::get('/summary', [SpendingController::class, 'summary']);
+            Route::get('/by-category', [SpendingController::class, 'byCategory']);
+            Route::get('/by-type', [SpendingController::class, 'byType']);
+            Route::get('/transactions', [SpendingController::class, 'transactions']);
         });
 
         // Admin routes

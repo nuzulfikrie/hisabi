@@ -14,7 +14,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { FileBarChart, Download, Filter, FileSpreadsheet, FileText } from '@phosphor-icons/react';
+import { ChartBar, Download, Funnel, FileXls, FileCsv } from '@phosphor-icons/react';
 import { formatNumber, getAppCurrency } from '@/Utils';
 
 interface ReportSection {
@@ -100,7 +100,7 @@ export default function Index({ auth, sections, currency, range, filters }: Prop
                 <Card>
                     <CardHeader>
                         <div className="flex items-center gap-2">
-                            <Filter className="h-5 w-5 text-primary" />
+                            <Funnel className="h-5 w-5 text-primary" />
                             <CardTitle className="text-base">Date Range Filter</CardTitle>
                         </div>
                     </CardHeader>
@@ -140,11 +140,11 @@ export default function Index({ auth, sections, currency, range, filters }: Prop
                 {/* Export Actions */}
                 <div className="flex flex-wrap gap-2">
                     <Button variant="outline" onClick={() => handleExport('xlsx')}>
-                        <FileSpreadsheet className="mr-2 h-4 w-4" />
+                        <FileXls className="mr-2 h-4 w-4" />
                         Export as Excel
                     </Button>
                     <Button variant="outline" onClick={() => handleExport('csv')}>
-                        <FileText className="mr-2 h-4 w-4" />
+                        <FileCsv className="mr-2 h-4 w-4" />
                         Export as CSV
                     </Button>
                 </div>
@@ -154,7 +154,7 @@ export default function Index({ auth, sections, currency, range, filters }: Prop
                     <Card key={sectionName}>
                         <CardHeader>
                             <div className="flex items-center gap-2">
-                                <FileBarChart className="h-5 w-5 text-primary" />
+                                <ChartBar className="h-5 w-5 text-primary" />
                                 <CardTitle className="capitalize">
                                     {sectionName.replace(/_/g, ' ')}
                                 </CardTitle>
@@ -242,7 +242,7 @@ export default function Index({ auth, sections, currency, range, filters }: Prop
                 {Object.keys(sections).length === 0 && (
                     <Card className="bg-muted/50">
                         <CardContent className="py-8 text-center">
-                            <FileBarChart className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
+                            <ChartBar className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
                             <p className="text-muted-foreground">
                                 No report data available for the selected period.
                             </p>

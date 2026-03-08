@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\V1\MetricsController;
 use App\Http\Controllers\Api\V1\OcrController;
+use App\Http\Controllers\Api\V1\SpendingController;
+use App\Http\Controllers\Api\V1\TagController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->prefix('api/v1')->group(function () {
@@ -26,6 +28,11 @@ Route::middleware(['auth'])->prefix('api/v1')->group(function () {
 
     Route::get('/budgets', [\App\Http\Controllers\Api\V1\BudgetController::class, 'index']);
     Route::post('/ai/chat', [\App\Http\Controllers\Api\V1\AIController::class, 'chat']);
+
+    Route::get('/tags', [TagController::class, 'index']);
+    Route::post('/tags', [TagController::class, 'store']);
+    Route::put('/tags/{tag}', [TagController::class, 'update']);
+    Route::delete('/tags/{tag}', [TagController::class, 'destroy']);
     Route::put('/user/profile', [\App\Http\Controllers\Api\V1\UserController::class, 'updateProfile']);
 
     Route::prefix('metrics')->group(function () {
@@ -55,6 +62,16 @@ Route::middleware(['auth'])->prefix('api/v1')->group(function () {
         Route::get('/brand-stats', [MetricsController::class, 'brandStats']);
         Route::get('/category-stats', [MetricsController::class, 'categoryStats']);
         Route::get('/circle-pack', [MetricsController::class, 'circlePack']);
+        Route::get('/cash-flow', [MetricsController::class, 'cashFlow']);
+        Route::get('/savings-rate', [MetricsController::class, 'savingsRate']);
+        Route::get('/emergency-fund', [MetricsController::class, 'emergencyFund']);
+        Route::get('/financial-health-score', [MetricsController::class, 'financialHealthScore']);
+        Route::get('/spending-alerts', [MetricsController::class, 'spendingAlerts']);
+        Route::get('/top-expenses', [MetricsController::class, 'topExpenses']);
+        Route::get('/recurring-expenses', [MetricsController::class, 'recurringExpenses']);
+        Route::get('/cash-runway', [MetricsController::class, 'cashRunway']);
+        Route::get('/income-stability', [MetricsController::class, 'incomeStability']);
+        Route::get('/budget-allocation', [MetricsController::class, 'budgetAllocation']);
     });
 
     // OCR Routes with rate limiting
@@ -62,5 +79,18 @@ Route::middleware(['auth'])->prefix('api/v1')->group(function () {
         Route::post('/scan', [OcrController::class, 'scan']);
         Route::post('/scan-and-parse', [OcrController::class, 'scanAndParse']);
         Route::get('/status', [OcrController::class, 'status']);
+    });
+
+    // Import Routes
+    Route::prefix('import')->group(function () {
+        Route::post('/transactions', [\App\Http\Controllers\ImportController::class, 'transactions']);
+    });
+
+    // Spending Tracker Routes
+    Route::prefix('spending')->group(function () {
+        Route::get('/summary', [SpendingController::class, 'summary']);
+        Route::get('/by-category', [SpendingController::class, 'byCategory']);
+        Route::get('/by-type', [SpendingController::class, 'byType']);
+        Route::get('/transactions', [SpendingController::class, 'transactions']);
     });
 });

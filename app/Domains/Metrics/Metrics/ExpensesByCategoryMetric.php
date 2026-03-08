@@ -11,7 +11,7 @@ class ExpensesByCategoryMetric extends Metric
     public function calculate(): array
     {
         $query = Category::query()
-            ->where('type', Category::EXPENSES)
+            ->where('categories.type', Category::EXPENSES)
             ->join('brands', 'brands.category_id', '=', 'categories.id')
             ->join('transactions', 'transactions.brand_id', '=', 'brands.id')
             ->select("categories.name as label", DB::raw("SUM(transactions.amount) as value"))

@@ -114,7 +114,7 @@ export default function SpendingAlertsWidget({ dateRange }: SpendingAlertsWidget
         );
     }
 
-    const displayAlerts = data.alerts.slice(0, 5);
+    const displayAlerts = (data.alerts || []).slice(0, 5);
 
     return (
         <Card className="relative p-6">
@@ -127,7 +127,7 @@ export default function SpendingAlertsWidget({ dateRange }: SpendingAlertsWidget
                         </Badge>
                     )}
                 </div>
-                {data.alerts.length > 5 && (
+                {(data.alerts || []).length > 5 && (
                     <button className="text-xs text-blue-600 hover:text-blue-800">
                         View all
                     </button>

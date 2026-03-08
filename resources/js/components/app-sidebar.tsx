@@ -9,6 +9,8 @@ import {
   GearSixIcon,
   FileTextIcon,
   DownloadIcon,
+  UploadIcon,
+  KeyIcon,
 } from "@phosphor-icons/react"
 
 import {
@@ -59,9 +61,19 @@ const items = [
     icon: FileTextIcon,
   },
   {
+    title: "Import",
+    url: "settings.import",
+    icon: UploadIcon,
+  },
+  {
     title: "Exports",
     url: "exports.index",
     icon: DownloadIcon,
+  },
+  {
+    title: "API Keys",
+    url: "settings",
+    icon: KeyIcon,
   },
 ]
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionController;
@@ -21,6 +22,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/brands', [BrandController::class, 'index'])->name('brands');
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+    Route::get('/settings/tags', fn () => Inertia::render('Settings/Tags'))->name('settings.tags');
 
     // User Settings
     Route::get('/user/settings', [UserSettingController::class, 'index'])->name('user.settings');
@@ -43,7 +45,13 @@ Route::middleware(['auth'])->group(function () {
     // Exports
     Route::get('/exports', [ExportController::class, 'index'])->name('exports.index');
     Route::prefix('exports')->group(function () {
-        Route::get('/transactions', [ExportController::class, 'transactions'])->name('exports.transactions');
+        Route::post('/transactions', [ExportController::class, 'transactions'])->name('exports.transactions');
         Route::get('/report', [ExportController::class, 'report'])->name('exports.report');
+        Route::get('/download/{filename}', [ExportController::class, 'download'])->name('exports.download');
+        Route::get('/status/{filename}', [ExportController::class, 'status'])->name('exports.status');
     });
+
+    // Imports
+    Route::get('/settings/import', [ImportController::class, 'index'])->name('settings.import');
+    Route::get('/import/template', [ImportController::class, 'template'])->name('import.template');
 });

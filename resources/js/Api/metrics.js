@@ -56,6 +56,17 @@ export const getCategoryStats = (dateRange) => getMetric('category-stats', { fro
 
 export const getCirclePack = (dateRange) => getMetric('circle-pack', { from: formatDate(dateRange?.from), to: formatDate(dateRange?.to) });
 
+export const getCashFlow = (dateRange) => getMetric('cash-flow', { from: formatDate(dateRange?.from), to: formatDate(dateRange?.to) });
+export const getSavingsRate = (dateRange) => getMetric('savings-rate', { from: formatDate(dateRange?.from), to: formatDate(dateRange?.to) });
+export const getEmergencyFund = () => getMetric('emergency-fund');
+export const getFinancialHealthScore = (dateRange) => getMetric('financial-health-score', { from: formatDate(dateRange?.from), to: formatDate(dateRange?.to) });
+export const getSpendingAlerts = (dateRange) => getMetric('spending-alerts', { from: formatDate(dateRange?.from), to: formatDate(dateRange?.to) });
+export const getTopExpenses = (dateRange) => getMetric('top-expenses', { from: formatDate(dateRange?.from), to: formatDate(dateRange?.to) });
+export const getRecurringExpenses = () => getMetric('recurring-expenses');
+export const getCashRunway = () => getMetric('cash-runway');
+export const getIncomeStability = () => getMetric('income-stability');
+export const getBudgetAllocation = (dateRange) => getMetric('budget-allocation', { from: formatDate(dateRange?.from), to: formatDate(dateRange?.to) });
+
 export const metricEndpoints = {
     totalIncome: getTotalIncome,
     totalExpenses: getTotalExpenses,
@@ -83,4 +94,14 @@ export const metricEndpoints = {
     brandStats: getBrandStats,
     categoryStats: getCategoryStats,
     financeVisualizationCirclePackMetric: getCirclePack,
+    cashFlow: getCashFlow,
+    savingsRate: getSavingsRate,
+    emergencyFund: getEmergencyFund,
+    financialHealthScore: getFinancialHealthScore,
+    spendingAlerts: getSpendingAlerts,
+    topExpenses: getTopExpenses,
+    recurringExpenses: getRecurringExpenses,
+    cashRunway: getCashRunway,
+    incomeStability: getIncomeStability,
+    budgetAllocation: getBudgetAllocation,
 };

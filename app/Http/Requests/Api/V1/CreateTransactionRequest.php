@@ -20,6 +20,8 @@ class CreateTransactionRequest extends FormRequest
             'note' => 'nullable|string|max:1000',
             'tags' => 'nullable|array',
             'tags.*' => 'string|uuid|exists:tags,uuid',
+            'type' => 'nullable|string|in:home,personal',
+            'description' => 'nullable|string|max:255',
         ];
     }
 }

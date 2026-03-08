@@ -85,6 +85,18 @@ export default function FinancialHealthScoreWidget({ dateRange }: FinancialHealt
         );
     }
 
+    // Ensure data has safe defaults
+    const safeData: FinancialHealthData = {
+        score: data.score ?? 0,
+        breakdown: {
+            savings_rate: data.breakdown?.savings_rate ?? 0,
+            emergency_fund: data.breakdown?.emergency_fund ?? 0,
+            debt_ratio: data.breakdown?.debt_ratio ?? 0,
+            spending_stability: data.breakdown?.spending_stability ?? 0,
+            budget_adherence: data.breakdown?.budget_adherence ?? 0,
+        }
+    };
+
     return (
         <Card className="relative p-6">
             <div className="flex justify-between items-start mb-4">
@@ -92,8 +104,8 @@ export default function FinancialHealthScoreWidget({ dateRange }: FinancialHealt
                     <h3 className="text-base text-gray-600">Financial Health Score</h3>
                     <p className="text-xs text-gray-400 mt-1">Based on your savings, spending & budgets</p>
                 </div>
-                <div className={`p-2 rounded-full ${getScoreBgColor(data.score)}`}>
-                    <HeartIcon className={`h-5 w-5 ${getScoreColor(data.score)}`} />
+                <div className={`p-2 rounded-full ${getScoreBgColor(safeData.score)}`}>
+                    <HeartIcon className={`h-5 w-5 ${getScoreColor(safeData.score)}`} />
                 </div>
             </div>
 
@@ -117,43 +129,43 @@ export default function FinancialHealthScoreWidget({ dateRange }: FinancialHealt
                             strokeWidth="8"
                             fill="none"
                             strokeLinecap="round"
-                            strokeDasharray={`${(data.score / 100) * 251.2} 251.2`}
-                            className={`${getScoreColor(data.score)} transition-all duration-700`}
+                            strokeDasharray={`${(safeData.score / 100) * 251.2} 251.2`}
+                            className={`${getScoreColor(safeData.score)} transition-all duration-700`}
                         />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className={`text-2xl font-bold ${getScoreColor(data.score)}`}>
-                            {data.score}
+                        <span className={`text-2xl font-bold ${getScoreColor(safeData.score)}`}>
+                            {safeData.score}
                         </span>
                     </div>
                 </div>
 
                 {/* Status */}
                 <div className="flex-1">
-                    <p className={`text-xl font-semibold ${getScoreColor(data.score)}`}>
-                        {getStatusLabel(data.score)}
+                    <p className={`text-xl font-semibold ${getScoreColor(safeData.score)}`}>
+                        {getStatusLabel(safeData.score)}
                     </p>
                     <p className="text-sm text-gray-500 mt-1">
-                        {getStatusDescription(data.score)}
+                        {getStatusDescription(safeData.score)}
                     </p>
 
                     {/* Mini Breakdown */}
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                         <div className="flex items-center gap-1">
                             <span className="text-gray-400">Savings:</span>
-                            <span className="font-medium">{data.breakdown.savings_rate}/20</span>
+                            <span className="font-medium">{safeData.breakdown.savings_rate}/20</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <span className="text-gray-400">Emergency:</span>
-                            <span className="font-medium">{data.breakdown.emergency_fund}/25</span>
+                            <span className="font-medium">{safeData.breakdown.emergency_fund}/25</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <span className="text-gray-400">Debt:</span>
-                            <span className="font-medium">{data.breakdown.debt_ratio}/20</span>
+                            <span className="font-medium">{safeData.breakdown.debt_ratio}/20</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <span className="text-gray-400">Budget:</span>
-                            <span className="font-medium">{data.breakdown.budget_adherence}/20</span>
+                            <span className="font-medium">{safeData.breakdown.budget_adherence}/20</span>
                         </div>
                     </div>
                 </div>

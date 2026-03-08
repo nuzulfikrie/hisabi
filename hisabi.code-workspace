@@ -1,0 +1,189 @@
+{
+    "folders": [
+        {
+            "path": ".",
+        },
+    ],
+    "settings": {
+        //themes and colors use material theme and icons
+        "workbench.colorTheme": "GitHub Dark Dimmed",
+
+        //terminal
+        "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
+        "terminal.integrated.fontSize": 14,
+        // PHP Settings
+        "php.validate.enable": true,
+        "php.suggest.basic": false,
+        "php.version": "8.4",
+        "php.validate.executablePath": "/usr/bin/php",
+
+        // Editor Settings
+        "editor.fontFamily": "JetBrainsMono Nerd Font",
+        "editor.fontSize": 14,
+        "editor.lineHeight": 20,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.rulers": [80, 120],
+        "editor.renderWhitespace": "boundary",
+        "editor.wordWrapColumn": 120,
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "always",
+            "source.organizeImports": "always",
+        },
+
+        // Laravel Specific
+        "laravel.format.enable": true,
+        "laravel-pint.enable": true,
+        "laravel-pint.configPath": "pint.json",
+        "blade.format.enable": true,
+        "[blade]": {
+            "editor.defaultFormatter": "shufo.vscode-blade-formatter",
+            "editor.autoClosingBrackets": "always",
+        },
+        "[php]": {
+            "editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
+        },
+
+        // Terminal Settings
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+            "zsh": {
+                "path": "/usr/bin/zsh",
+                "icon": "terminal",
+            },
+        },
+
+        // File Settings
+        "files.associations": {
+            "*.php": "php",
+            "*.blade.php": "blade",
+            ".env.*": "dotenv",
+        },
+        "files.exclude": {
+            "**/.git": true,
+            "**/.svn": true,
+            "**/.hg": true,
+            "**/CVS": true,
+            "**/.DS_Store": true,
+            "**/vendor": false,
+            "**/node_modules": true,
+        },
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+
+        // Search Settings
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/bower_components": true,
+            "**/vendor": true,
+            "**/*.code-search": true,
+            "storage/": true,
+            "public/storage": true,
+            "public/css": true,
+            "public/js": true,
+        },
+
+        // Git Settings
+        "git.enableSmartCommit": true,
+        "git.autofetch": true,
+        // Intelephense Settings
+        "intelephense.diagnostics.undefinedMethods": false,
+        "intelephense.diagnostics.undefinedTypes": false,
+        "intelephense.diagnostics.undefinedFunctions": false,
+        "intelephense.diagnostics.undefinedConstants": false,
+        "intelephense.diagnostics.undefinedClassConstants": false,
+        "intelephense.diagnostics.undefinedProperties": false,
+        "intelephense.files.exclude": [
+            "**/.git/**",
+            "**/.svn/**",
+            "**/.hg/**",
+            "**/CVS/**",
+            "**/.DS_Store/**",
+            "**/node_modules/**",
+            "**/bower_components/**",
+            "**/vendor/**/{Tests,tests}/**",
+            "**/.history/**",
+            "**/vendor/**/vendor/**",
+        ],
+    },
+    "extensions": {
+        "recommendations": [
+            "bmewburn.vscode-intelephense-client",
+            "onecentlin.laravel-blade",
+            "amiralizadeh9480.laravel-extra-intellisense",
+            "ryannaddy.laravel-artisan",
+            "shufo.vscode-blade-formatter",
+            "mohamedbenhida.laravel-intellisense",
+            "mikestead.dotenv",
+            "eamodio.gitlens",
+            "codingyu.laravel-goto-view",
+            "ctf0.laravel-goto-config",
+            "xdebug.php-debug",
+            "neilbrayfield.php-docblocker",
+            "junstyle.php-cs-fixer",
+            "mhutchie.git-graph",
+            "formulahendry.terminal",
+        ],
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Git Fetch develop",
+                "type": "shell",
+                "command": "git fetch origin develop",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Git MERGE DEVELOP TO LOCAL",
+                "type": "shell",
+                "command": "git merge origin/develop --no-edit -m 'Merge develop into local'",
+                "problemMatcher": [],
+            },
+            {
+                "label": "containter name ums LARAVEL RESET AND OPTIMIZE (DOCKER)",
+                "type": "shell",
+                "command": "docker exec -it ums php artisan optimize:clear && docker exec -it ums php artisan reload:all && docker exec -it ums php artisan optimize:clear && echo 'Laravel reset and optimize completed'",
+                "problemMatcher": [],
+            },
+
+            {
+                "label": "Serve local",
+                "type": "shell",
+                "command": "php artisan serve --host=0.0.0.0 --port 8000 && echo 'Server started on 8000'",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Cache Clear",
+                "type": "shell",
+                "command": "php artisan cache:clear && php artisan config:clear && php artisan route:clear && php artisan view:clear",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Migrate Fresh",
+                "type": "shell",
+                "command": "php artisan migrate:fresh --seed",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Queue Work",
+                "type": "shell",
+                "command": "php artisan queue:work",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Test",
+                "type": "shell",
+                "command": "php artisan test",
+                "group": {
+                    "kind": "test",
+                    "isDefault": true,
+                },
+                "problemMatcher": [],
+            },
+        ],
+    },
+}

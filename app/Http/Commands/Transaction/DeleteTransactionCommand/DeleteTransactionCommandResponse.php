@@ -14,7 +14,7 @@ readonly class DeleteTransactionCommandResponse
     public function toResponse(): JsonResponse
     {
         return response()->json([
-            'transaction' => $this->transaction->load('brand.category'),
+            'data' => $this->transaction->load('brand.category'),
         ]);
     }
 }

@@ -65,7 +65,7 @@ export default function TopExpensesWidget({ dateRange, limit = 5 }: TopExpensesW
         );
     }
 
-    const displayTransactions = data.transactions.slice(0, limit);
+    const displayTransactions = (data.transactions || []).slice(0, limit);
 
     return (
         <Card className="relative p-6">

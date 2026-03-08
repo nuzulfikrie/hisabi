@@ -18,7 +18,7 @@ class IsAdmin
         $user = $request->user();
 
         if (!$user || !$user->isAdmin()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            abort(403, 'Unauthorized. Admin access required.');
         }
 
         return $next($request);

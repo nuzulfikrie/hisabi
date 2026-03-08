@@ -11,6 +11,8 @@ use App\Contracts\SmsParser as SmsParserContract;
 use App\Contracts\SmsTemplateDetector as SmsTemplateDetectorContract;
 use App\Contracts\ReportManager as ReportManagerContract;
 use App\Contracts\SmsTransactionProcessor as SmsTransactionProcessorContract;
+use App\Providers\TelescopeServiceProvider;
+use Laravel\Telescope\TelescopeServiceProvider as LaravelTelescopeServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +23,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if ($this->app->environment('local') && class_exists(LaravelTelescopeServiceProvider::class)) {
+            $this->app->register(LaravelTelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
+
+
         $this->app->bind(SmsParserContract::class, SmsParser::class);
         $this->app->bind(SmsTemplateDetectorContract::class, SmsTemplateDetector::class);
         $this->app->bind(SmsTransactionProcessorContract::class, SmsTransactionProcessor::class);

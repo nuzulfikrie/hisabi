@@ -18,7 +18,7 @@ class SpendingAlertsMetric extends Metric
         $lastMonthEnd = $now->copy()->subMonth()->endOfMonth();
 
         // 1. Check for spending increases >30% in any category vs previous month
-        $categories = \App\Models\Category::where('type', 'EXPENSES')->get();
+        $categories = \App\Models\Category::where('categories.type', 'EXPENSES')->get();
         
         foreach ($categories as $category) {
             $currentMonthSpending = Transaction::query()

@@ -396,7 +396,7 @@ class TransactionControllerTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonStructure([
-                'transaction' => [
+                'data' => [
                     'id',
                     'amount',
                     'created_at',
@@ -412,10 +412,10 @@ class TransactionControllerTest extends TestCase
                     ]
                 ]
             ])
-            ->assertJsonPath('transaction.amount', 100.50)
-            ->assertJsonPath('transaction.brand.name', 'Test Brand')
-            ->assertJsonPath('transaction.brand.category.name', 'Test Category')
-            ->assertJsonPath('transaction.note', 'Test transaction');
+            ->assertJsonPath('data.amount', 100.50)
+            ->assertJsonPath('data.brand.name', 'Test Brand')
+            ->assertJsonPath('data.brand.category.name', 'Test Category')
+            ->assertJsonPath('data.note', 'Test transaction');
 
         $this->assertDatabaseHas('transactions', [
             'amount' => 100.50,
@@ -610,7 +610,7 @@ class TransactionControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'transaction' => [
+                'data' => [
                     'id',
                     'amount',
                     'created_at',
@@ -626,11 +626,11 @@ class TransactionControllerTest extends TestCase
                     ]
                 ]
             ])
-            ->assertJsonPath('transaction.id', $transaction->id)
-            ->assertJsonPath('transaction.amount', 200.75)
-            ->assertJsonPath('transaction.brand.name', 'New Brand')
-            ->assertJsonPath('transaction.brand.category.name', 'New Category')
-            ->assertJsonPath('transaction.note', 'Updated note');
+            ->assertJsonPath('data.id', $transaction->id)
+            ->assertJsonPath('data.amount', 200.75)
+            ->assertJsonPath('data.brand.name', 'New Brand')
+            ->assertJsonPath('data.brand.category.name', 'New Category')
+            ->assertJsonPath('data.note', 'Updated note');
 
         $this->assertDatabaseHas('transactions', [
             'id' => $transaction->id,
@@ -836,7 +836,7 @@ class TransactionControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'transaction' => [
+                'data' => [
                     'id',
                     'amount',
                     'created_at',
@@ -852,11 +852,11 @@ class TransactionControllerTest extends TestCase
                     ]
                 ]
             ])
-            ->assertJsonPath('transaction.id', $transaction->id)
-            ->assertJsonPath('transaction.amount', 100.50)
-            ->assertJsonPath('transaction.brand.name', 'Test Brand')
-            ->assertJsonPath('transaction.brand.category.name', 'Test Category')
-            ->assertJsonPath('transaction.note', 'Test transaction');
+            ->assertJsonPath('data.id', $transaction->id)
+            ->assertJsonPath('data.amount', 100.50)
+            ->assertJsonPath('data.brand.name', 'Test Brand')
+            ->assertJsonPath('data.brand.category.name', 'Test Category')
+            ->assertJsonPath('data.note', 'Test transaction');
 
         $this->assertDatabaseMissing('transactions', [
             'id' => $transaction->id

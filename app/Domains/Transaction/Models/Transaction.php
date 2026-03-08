@@ -17,6 +17,8 @@ class Transaction extends Model
 
     protected $guarded = [];
 
+    protected $fillable = ['amount', 'brand_id', 'type', 'description', 'created_at', 'meta', 'user_id'];
+
     /**
      * Create a new factory instance for the model.
      */
@@ -28,6 +30,21 @@ class Transaction extends Model
     protected $casts = [
         'meta' => 'array',
     ];
+
+    public function scopeByType($query, string $type)
+    {
+        return $query->where('type', $type);
+    }
+
+    public function scopeHome($query)
+    {
+        return $query->where('type', 'home');
+    }
+
+    public function scopePersonal($query)
+    {
+        return $query->where('type', 'personal');
+    }
 
     public function brand()
     {

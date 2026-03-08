@@ -11,12 +11,21 @@ import {
     DialogContent,
     DialogTitle,
 } from '@/components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 export default function Create({ brands, showCreate, onClose, onCreate }) {
     const [amount, setAmount] = useState(0);
     const [brand, setBrand] = useState(null);
     const [createdAt, setCreatedAt] = useState('');
     const [note, setNote] = useState('');
+    const [type, setType] = useState('personal');
+    const [description, setDescription] = useState('');
     const [tags, setTags] = useState([]);
     const [availableTags, setAvailableTags] = useState([]);
     const [isReady, setIsReady] = useState(false);
@@ -34,6 +43,13 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
     useEffect(() => {
         setIsReady(amount != 0 && brand != null && createdAt != '' ? true : false);
     }, [amount, brand, createdAt]);
+
+    // Auto-populate description from brand name when brand changes
+    useEffect(() => {
+        if (brand && !description) {
+            setDescription(brand.name);
+        }
+    }, [brand]);
 
     const handleCreateTag = async (name) => {
         // Generate a random color for the new tag
@@ -63,7 +79,9 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
             brandId: brand.id,
             createdAt,
             note,
-            tags: tags.map(t => t.uuid)
+            tags: tags.map(t => t.uuid),
+            type,
+            description
         })
             .then(({ data }) => {
                 onCreate(data.transaction);
@@ -72,6 +90,8 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
                 setAmount(0);
                 setCreatedAt('');
                 setNote('');
+                setType('personal');
+                setDescription('');
                 setTags([]);
                 setLoading(false);
                 onClose();
@@ -119,6 +139,38 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
                             displayInputValue={(item) => item ? `${item.name} (${item.category?.name ?? 'N/A'})` : ''}
                             displayOptionValue={(item) => item ? `${item.name} (${item.category?.name ?? 'N/A'})` : ''}
                         />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="description">
+                            Description
+                        </Label>
+                        <Input
+                            type="text"
+                            name="description"
+                            value={description}
+                            className="mt-1"
+                            placeholder="e.g., Internet, Groceries midweek"
+                            onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="type">
+                            Type
+                        </Label>
+                        <Select
+                            value={type}
+                            onValueChange={setType}
+                        >
+                            <SelectTrigger className="mt-1 w-full">
+                                <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="personal">Personal</SelectItem>
+                                <SelectItem value="home">Home</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     <div>

@@ -196,24 +196,24 @@ export default function FinancialProjectionChart({ dateRange }: FinancialProject
         if (!context) return;
 
         // Prepare labels (historical + projected months)
-        const historicalLabels = data.historical_data.map(d => d.month);
-        const projectedLabels = data.projected_net_worth.map(d => d.month);
+        const historicalLabels = (data.historical_data || []).map(d => d.month);
+        const projectedLabels = (data.projected_net_worth || []).map(d => d.month);
         const allLabels = [...historicalLabels, ...projectedLabels];
 
         // Historical net worth calculation (cumulative)
         const historicalNetWorth: number[] = [];
         let runningTotal = 0;
         // We need to calculate from the beginning of historical data
-        for (let i = 0; i < data.historical_data.length; i++) {
+        for (let i = 0; i < (data.historical_data || []).length; i++) {
             const month = data.historical_data[i];
             runningTotal += (month.income - month.expenses);
             historicalNetWorth.push(runningTotal);
         }
 
         // Projected net worth values
-        const projectedValues = data.projected_net_worth.map(d => d.value);
-        const projectedLower = data.projected_net_worth.map(d => d.lower_bound);
-        const projectedUpper = data.projected_net_worth.map(d => d.upper_bound);
+        const projectedValues = (data.projected_net_worth || []).map(d => d.value);
+        const projectedLower = (data.projected_net_worth || []).map(d => d.lower_bound);
+        const projectedUpper = (data.projected_net_worth || []).map(d => d.upper_bound);
 
         // Create gradient for projected area
         const gradient = context.createLinearGradient(0, 0, 0, 300);
@@ -364,10 +364,11 @@ export default function FinancialProjectionChart({ dateRange }: FinancialProject
         );
     }
 
-    const finalProjectedValue = data.projected_net_worth[data.projected_net_worth.length - 1]?.value ?? 0;
-    const projectedChange = finalProjectedValue - data.current_net_worth;
-    const projectedChangePercent = data.current_net_worth !== 0 
-        ? (projectedChange / Math.abs(data.current_net_worth)) * 100 
+    const finalProjectedValue = (data.projected_net_worth || [])[(data.projected_net_worth || []).length - 1]?.value ?? 0;
+    const currentNetWorth = data.current_net_worth ?? 0;
+    const projectedChange = finalProjectedValue - currentNetWorth;
+    const projectedChangePercent = currentNetWorth !== 0 
+        ? (projectedChange / Math.abs(currentNetWorth)) * 100 
         : 0;
 
     return (
@@ -442,7 +443,7 @@ export default function FinancialProjectionChart({ dateRange }: FinancialProject
                 <div className="bg-gray-50 rounded-lg p-3">
                     <p className="text-xs text-gray-500 mb-1">Confidence</p>
                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getConfidenceBadgeClass(data.confidence_score.level)}`}>
-                        {data.confidence_score.score.toFixed(0)}%
+                        {(data.confidence_score?.score ?? 0).toFixed(0)}%
                     </span>
                 </div>
             </div>
@@ -457,29 +458,29 @@ export default function FinancialProjectionChart({ dateRange }: FinancialProject
                 <div className="text-center">
                     <p className="text-xs text-gray-500 mb-1">Avg. Monthly Income</p>
                     <p className="text-sm font-semibold text-green-600">
-                        {getAppCurrency()} {formatNumber(data.monthly_averages.income)}
+                        {getAppCurrency()} {formatNumber(data.monthly_averages?.income ?? 0)}
                     </p>
                 </div>
                 <div className="text-center">
                     <p className="text-xs text-gray-500 mb-1">Avg. Monthly Expenses</p>
                     <p className="text-sm font-semibold text-red-600">
-                        {getAppCurrency()} {formatNumber(data.monthly_averages.expenses)}
+                        {getAppCurrency()} {formatNumber(data.monthly_averages?.expenses ?? 0)}
                     </p>
                 </div>
                 <div className="text-center">
                     <p className="text-xs text-gray-500 mb-1">Avg. Monthly Savings</p>
-                    <p className={`text-sm font-semibold ${data.monthly_averages.savings >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                        {getAppCurrency()} {formatNumber(data.monthly_averages.savings)}
+                    <p className={`text-sm font-semibold ${(data.monthly_averages?.savings ?? 0) >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                        {getAppCurrency()} {formatNumber(data.monthly_averages?.savings ?? 0)}
                     </p>
                 </div>
             </div>
 
             {/* Recommendations */}
-            {data.recommendations.length > 0 && (
+            {(data.recommendations || []).length > 0 && (
                 <div className="space-y-2">
                     <h4 className="text-sm font-medium text-gray-700">Recommendations</h4>
                     <div className="space-y-2">
-                        {data.recommendations.map((rec, index) => (
+                        {(data.recommendations || []).map((rec, index) => (
                             <div
                                 key={index}
                                 className={`p-3 rounded-lg border text-sm ${getRecommendationClass(rec.type)}`}
@@ -501,10 +502,10 @@ export default function FinancialProjectionChart({ dateRange }: FinancialProject
             <div className="mt-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-600">
                 <p>
                     <span className="font-medium">Confidence Score: </span>
-                    {data.confidence_score.description}
+                    {data.confidence_score?.description || 'No confidence data available'}
                 </p>
                 <p className="mt-1 text-gray-400">
-                    Based on {data.confidence_score.months_of_data || 6} months of income data
+                    Based on {data.confidence_score?.months_of_data || 6} months of income data
                 </p>
             </div>
         </Card>

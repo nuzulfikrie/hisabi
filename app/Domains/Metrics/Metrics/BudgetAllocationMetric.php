@@ -23,7 +23,7 @@ class BudgetAllocationMetric extends Metric
         $totalExpenses = $expensesQuery->sum('amount');
 
         // Get category breakdown for expenses (to classify needs vs wants)
-        $categories = Category::where('type', Category::EXPENSES)
+        $categories = Category::where('categories.type', Category::EXPENSES)
             ->with(['brands.transactions'])
             ->get();
 

@@ -1,0 +1,25 @@
+<?php
+
+namespace {{ namespace }};
+
+use CleaniqueCoders\Traitify\Contracts\Enum as Contract;
+use CleaniqueCoders\Traitify\Concerns\InteractsWithEnum;
+
+enum {{ class }}: string implements Contract
+{
+    use InteractsWithEnum;
+
+    case EXAMPLE = 'example';
+
+    public function label(): string
+    {
+        return ucfirst($this->value);
+    }
+
+    public function description(): string
+    {
+        return match ($this) {
+            self::EXAMPLE => 'This is an example description.',
+        };
+    }
+}

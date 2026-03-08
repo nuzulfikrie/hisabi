@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Head, router } from '@inertiajs/react';
 import { debounce } from 'lodash';
-import { startOfMonth, endOfMonth } from 'date-fns';
+import { startOfMonth, endOfMonth, format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 
 import Authenticated from '@/Layouts/Authenticated';
@@ -18,6 +18,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowElbowDownRightIcon, X } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { FileXls, FileCsv, Camera, ArrowsClockwise } from '@phosphor-icons/react';
+import axios from 'axios';
 import TransactionStats from '@/components/Domain/TransactionStats';
 import { getCategoryIcon } from '@/Utils/categoryIcons';
 import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
@@ -173,6 +181,41 @@ export default function Index({ auth }: { auth: any }) {
     const handleDateChange = (newDateRange: DateRange | undefined) => {
         if (newDateRange?.from && newDateRange?.to) {
             setDateRange(newDateRange);
+            
+            // Also update filters to sync with export
+            const formattedFrom = format(newDateRange.from, 'yyyy-MM-dd');
+            const formattedTo = format(newDateRange.to, 'yyyy-MM-dd');
+            
+            handleFiltersApply({
+                ...filters,
+                dateFrom: formattedFrom,
+                dateTo: formattedTo,
+            });
+        }
+    };
+
+    const [isExporting, setIsExporting] = useState(false);
+
+    const handleExport = async (format: string) => {
+        setIsExporting(true);
+        
+        try {
+            const params = new URLSearchParams();
+            params.append('format', format);
+            if (filters.dateFrom) params.append('start_date', filters.dateFrom);
+            if (filters.dateTo) params.append('end_date', filters.dateTo);
+            if (filters.brandId) params.append('brand_id', filters.brandId);
+
+            const response = await axios.post(route('exports.transactions'), params);
+            
+            if (response.data.success) {
+                alert('Export is being processed. You will be able to download it from the Exports page when ready.');
+            }
+        } catch (error) {
+            console.error('Export failed:', error);
+            alert('Failed to start export. Please try again.');
+        } finally {
+            setIsExporting(false);
         }
     };
 
@@ -184,6 +227,36 @@ export default function Index({ auth }: { auth: any }) {
                     onDateChange={handleDateChange}
                     initialDate={dateRange}
                 />
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" disabled={isExporting}>
+                            {isExporting ? (
+                                <ArrowsClockwise className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                                <FileXls className="mr-2 h-4 w-4" />
+                            )}
+                            {isExporting ? 'Exporting...' : 'Export'}
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleExport('xlsx')} disabled={isExporting}>
+                            <FileXls className="mr-2 h-4 w-4" />
+                            Export as Excel
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleExport('csv')} disabled={isExporting}>
+                            <FileCsv className="mr-2 h-4 w-4" />
+                            Export as CSV
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.visit('/transactions/scan-receipt')}
+                >
+                    <Camera className="mr-2 h-4 w-4" />
+                    Scan Receipt
+                </Button>
                 <RecordTransactionButton
                     brands={allBrands}
                     onSuccess={onCreate}
@@ -283,10 +356,19 @@ export default function Index({ auth }: { auth: any }) {
                                                 </Avatar>
                                             )}
                                             <div>
-                                                <button onClick={() => setEditItem(transaction)} className='font-medium hover:underline'>{transaction.brand.name} </button>
+                                                <button onClick={() => setEditItem(transaction)} className='font-medium hover:underline'>
+                                                    {transaction.description || transaction.brand.name}
+                                                </button>
                                                 <div className='flex gap-1 text-muted-foreground items-center'>
                                                     <ArrowElbowDownRightIcon size={10} weight="bold" />
-                                                    <p className=' text-xs'>{hasCategory ? <span>{transaction.brand.category.name} -</span> : ''} {transaction.created_at}</p>
+                                                    <p className=' text-xs'>
+                                                        {transaction.type && (
+                                                            <Badge variant="outline" className="mr-1 text-[10px] px-1 py-0">
+                                                                {transaction.type}
+                                                            </Badge>
+                                                        )}
+                                                        {hasCategory ? <span>{transaction.brand.category.name} -</span> : ''} {transaction.created_at}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>

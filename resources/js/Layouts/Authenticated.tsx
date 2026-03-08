@@ -3,6 +3,7 @@ import React from 'react';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import RightSidebar from '@/components/RightSidebar';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function Authenticated({ auth, header, children }: { auth?: any; header?: React.ReactNode; children: React.ReactNode }) {
     return (
@@ -17,6 +18,7 @@ export default function Authenticated({ auth, header, children }: { auth?: any; 
                                 {header}
                             </div>
                         )}
+                        <ThemeToggle />
                     </div>
                 </header>
                 <main className="flex-1">

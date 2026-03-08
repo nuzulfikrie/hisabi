@@ -1,7 +1,47 @@
 <?php
 
+use App\Enums\Currency;
+use App\Enums\Locale;
+
 return [
-    'currency' => 'AED',
+    /*
+    |--------------------------------------------------------------------------
+    | Default Currency
+    |--------------------------------------------------------------------------
+    |
+    | This value is the default currency that will be used by the application.
+    | You can change this value to any of the available currencies defined
+    | in the App\Enums\Currency enum.
+    |
+    */
+    'currency' => env('HISABI_DEFAULT_CURRENCY', Currency::default()->value),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Locale
+    |--------------------------------------------------------------------------
+    |
+    | This value is the default locale that will be used by the application.
+    | You can change this value to any of the available locales defined
+    | in the App\Enums\Locale enum.
+    |
+    */
+    'default_locale' => env('HISABI_DEFAULT_LOCALE', Locale::default()->value),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Available Locales
+    |--------------------------------------------------------------------------
+    |
+    | These are the locales that are supported by the application. Users can
+    | switch between these locales if they are available in the resources/lang
+    | directory.
+    |
+    */
+    'available_locales' => [
+        Locale::ENGLISH->value,
+        Locale::MALAY->value,
+    ],
     'sms_templates' => [
         'Purchase of AED {amount} with {card} at {brand},',
         'Payment of AED {amount} to {brand} with {card}.',
